@@ -27,6 +27,9 @@ const { passport } = require('../middleware/auth');
 // Import database connection
 const connectDB = require('./config/database');
 
+// Import initialization functions
+const { createDefaultAdmin } = require('./scripts/seedData');
+
 // Import routes
 const authRoutes = require('./routes/authRoutes');
 const googleAuthRoutes = require('../routes/auth');
@@ -47,8 +50,22 @@ const { handleMulterError } = require('./middleware/upload');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Connect to database
-connectDB();
+// Connect to database and initialize
+const initializeApp = async () => {
+  try {
+    await connectDB();
+    console.log('🔧 Initializing application...');
+    
+    // Create default admin user if it doesn't exist
+    await createDefaultAdmin();
+    console.log('✅ Application initialization complete');
+  } catch (error) {
+    console.error('❌ Application initialization failed:', error);
+    process.exit(1);
+  }
+};
+
+initializeApp();
 
 // Trust proxy (for rate limiting behind reverse proxy)
 app.set('trust proxy', 1);
