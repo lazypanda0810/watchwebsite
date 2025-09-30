@@ -215,7 +215,7 @@ orderSchema.methods.calculateGST = function() {
 
 // Index for efficient queries
 orderSchema.index({ user: 1, createdAt: -1 });
-orderSchema.index({ orderNumber: 1 });
+// orderNumber index is already created by unique: true
 orderSchema.index({ orderStatus: 1 });
 orderSchema.index({ createdAt: -1 });
 

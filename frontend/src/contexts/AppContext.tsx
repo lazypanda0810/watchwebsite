@@ -2,7 +2,7 @@ import React, { createContext, useContext, useReducer, useEffect } from 'react';
 import { Product } from '@/data/products';
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001';
 
 // Types
 export interface User {
@@ -46,7 +46,7 @@ const initialState: AppState = {
   cart: [],
   wishlist: [],
   products: [],
-  loading: false,
+  loading: true,
   error: null,
 };
 
@@ -121,7 +121,7 @@ const AppContext = createContext<{
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [state, dispatch] = useReducer(appReducer, initialState);
 
-  // Initialize with local data
+  // Initialize with local data and check authentication
   useEffect(() => {
     const initializeData = async () => {
       try {
@@ -131,12 +131,38 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         console.error('Failed to load local data:', error);
       }
     };
+    
+    const checkAuthStatus = async () => {
+      const token = localStorage.getItem('auth_token');
+      if (token) {
+        try {
+          // Add timeout to prevent hanging
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+          
+          const response = await axios.get('/api/auth/me', {
+            signal: controller.signal
+          });
+          clearTimeout(timeoutId);
+          dispatch({ type: 'SET_USER', payload: response.data.data.user });
+        } catch (error) {
+          console.log('Auth check failed:', error);
+          // Token is invalid or server unreachable, remove it
+          localStorage.removeItem('auth_token');
+          dispatch({ type: 'SET_USER', payload: null });
+        }
+      }
+      dispatch({ type: 'SET_LOADING', payload: false });
+    };
+    
     initializeData();
+    checkAuthStatus();
   }, []);
 
   // Setup axios interceptors
   useEffect(() => {
-    axios.defaults.baseURL = API_BASE_URL;
+    // Use empty baseURL since Vite proxy handles API routing
+    axios.defaults.baseURL = '';
     
     // Request interceptor to add auth token
     axios.interceptors.request.use(
@@ -167,8 +193,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     login: async (email: string, password: string) => {
       try {
         dispatch({ type: 'SET_LOADING', payload: true });
-        const response = await axios.post('/auth/login', { email, password });
-        const { token, user } = response.data;
+        const response = await axios.post('/api/auth/login', { email, password });
+        const { token, user } = response.data.data;
         
         localStorage.setItem('auth_token', token);
         dispatch({ type: 'SET_USER', payload: user });
@@ -190,8 +216,27 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     fetchProducts: async (filters?: any) => {
       try {
         dispatch({ type: 'SET_LOADING', payload: true });
-        const response = await axios.get('/products', { params: filters });
-        dispatch({ type: 'SET_PRODUCTS', payload: response.data });
+        const response = await axios.get('/api/products', { params: filters });
+        
+        // Transform API data to match frontend expectations
+        const apiProducts = response.data.data.products || [];
+        const transformedProducts = apiProducts.map((product: any) => ({
+          id: product._id,
+          name: product.name,
+          price: product.basePrice,
+          originalPrice: product.discountPrice ? product.basePrice : undefined,
+          image: product.variants?.[0]?.images?.[0]?.url || '/placeholder.svg',
+          rating: parseFloat(product.rating?.average || '0'),
+          reviews: product.rating?.count || 0,
+          category: product.category?.name || '',
+          isNew: product.isFeatured || false,
+          description: product.description || '',
+          features: product.specifications ? Object.values(product.specifications).filter(Boolean) : [],
+          colors: product.variants?.map((v: any) => v.color) || [],
+          straps: product.variants?.map((v: any) => v.strap?.material) || []
+        }));
+        
+        dispatch({ type: 'SET_PRODUCTS', payload: transformedProducts });
       } catch (error: any) {
         console.log('API failed, using local data');
         // Fallback to local data
@@ -215,7 +260,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
         if (state.user) {
           try {
-            await axios.post('/cart', cartItem);
+            await axios.post('/api/cart', cartItem);
           } catch (error) {
             console.log('API failed, using local cart');
           }
@@ -238,7 +283,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       try {
         if (state.user) {
           try {
-            await axios.delete(`/cart/${itemId}`);
+            await axios.delete(`/api/cart/${itemId}`);
           } catch (error) {
             console.log('API failed, using local cart');
           }
@@ -254,7 +299,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       try {
         if (state.user) {
           try {
-            await axios.put(`/cart/${itemId}`, { quantity });
+            await axios.put(`/api/cart/${itemId}`, { quantity });
           } catch (error) {
             console.log('API failed, using local cart');
           }
@@ -269,7 +314,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     fetchCart: async () => {
       try {
         if (state.user) {
-          const response = await axios.get('/cart');
+          const response = await axios.get('/api/cart');
           dispatch({ type: 'SET_CART', payload: response.data });
         }
       } catch (error: any) {
@@ -288,7 +333,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   return (
     <AppContext.Provider value={{ state, dispatch, actions }}>
-      {children}
+      {state.loading ? (
+        <div className="min-h-screen flex items-center justify-center bg-gray-50">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 mx-auto"></div>
+            <p className="mt-4 text-gray-600">Loading...</p>
+          </div>
+        </div>
+      ) : (
+        children
+      )}
     </AppContext.Provider>
   );
 };

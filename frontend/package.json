@@ -9,8 +9,7 @@
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
     "preview": "vite preview",
-    "check": "node scripts/startup-check.js",
-    "predev": "node scripts/startup-check.js"
+    "check": "node scripts/startup-check.cjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",

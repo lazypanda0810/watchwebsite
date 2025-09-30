@@ -44,7 +44,7 @@ const VerifyEmail = () => {
     setSuccess('');
 
     try {
-      const response = await fetch('/auth/verify-code', {
+      const response = await fetch('/api/auth/verify-code', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -76,7 +76,7 @@ const VerifyEmail = () => {
     setSuccess('');
 
     try {
-      const response = await fetch('/auth/resend-code', {
+      const response = await fetch('/api/auth/resend-code', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

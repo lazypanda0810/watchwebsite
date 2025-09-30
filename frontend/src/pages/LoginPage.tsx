@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Card } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Eye, EyeOff, Mail, Lock, User, ArrowLeft } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock, User, ArrowLeft, Phone } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import axios from 'axios';
 
@@ -23,7 +23,9 @@ const LoginPage = () => {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
-    name: '',
+    firstName: '',
+    lastName: '',
+    phone: '',
     confirmPassword: '',
   });
 
@@ -67,11 +69,34 @@ const LoginPage = () => {
       return;
     }
 
+    // Validate password strength
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/;
+    if (!passwordRegex.test(formData.password)) {
+      toast({
+        title: "Password Too Weak",
+        description: "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Validate phone number
+    if (!/^[0-9]{10}$/.test(formData.phone)) {
+      toast({
+        title: "Invalid Phone Number",
+        description: "Please enter a valid 10-digit phone number",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
-      await axios.post('/auth/signup', {
-        name: formData.name,
+      await axios.post('/api/auth/signup', {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
         email: formData.email,
         password: formData.password,
+        phone: formData.phone,
       });
       
       toast({
@@ -80,7 +105,7 @@ const LoginPage = () => {
       });
       
       setActiveTab('login');
-      setFormData(prev => ({ ...prev, name: '', confirmPassword: '' }));
+      setFormData(prev => ({ ...prev, firstName: '', lastName: '', phone: '', confirmPassword: '' }));
     } catch (error: any) {
       toast({
         title: "Signup Failed",
@@ -186,18 +211,54 @@ const LoginPage = () => {
             <TabsContent value="signup" className="space-y-4 mt-6">
               <form onSubmit={handleSignup} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="name">Full Name</Label>
+                  <Label htmlFor="firstName">First Name</Label>
                   <div className="relative">
                     <User size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
                     <Input
-                      id="name"
-                      name="name"
+                      id="firstName"
+                      name="firstName"
                       type="text"
-                      placeholder="Enter your full name"
-                      value={formData.name}
+                      placeholder="Enter your first name"
+                      value={formData.firstName}
                       onChange={handleInputChange}
                       className="pl-10"
                       required
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="lastName">Last Name</Label>
+                  <div className="relative">
+                    <User size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
+                    <Input
+                      id="lastName"
+                      name="lastName"
+                      type="text"
+                      placeholder="Enter your last name"
+                      value={formData.lastName}
+                      onChange={handleInputChange}
+                      className="pl-10"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="phone">Phone Number</Label>
+                  <div className="relative">
+                    <Phone size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
+                    <Input
+                      id="phone"
+                      name="phone"
+                      type="tel"
+                      placeholder="Enter your 10-digit phone number"
+                      value={formData.phone}
+                      onChange={handleInputChange}
+                      className="pl-10"
+                      required
+                      pattern="[0-9]{10}"
+                      maxLength={10}
                     />
                   </div>
                 </div>
@@ -241,6 +302,9 @@ const LoginPage = () => {
                       {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                     </button>
                   </div>
+                  <p className="text-xs text-muted-foreground">
+                    Password must contain at least 8 characters with uppercase, lowercase, number, and special character
+                  </p>
                 </div>
 
                 <div className="space-y-2">

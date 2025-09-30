@@ -173,17 +173,21 @@ app.use(notFound);
 app.use(errorHandler);
 
 // Graceful shutdown
-const gracefulShutdown = (signal) => {
+const gracefulShutdown = async (signal) => {
   console.log(`\n🛑 Received ${signal}. Shutting down gracefully...`);
   
-  server.close(() => {
+  server.close(async () => {
     console.log('🔒 HTTP server closed');
     
     // Close database connection
-    require('mongoose').connection.close(() => {
+    try {
+      await require('mongoose').connection.close();
       console.log('🔌 Database connection closed');
       process.exit(0);
-    });
+    } catch (error) {
+      console.error('❌ Error closing database connection:', error);
+      process.exit(1);
+    }
   });
   
   // Force close after 10 seconds

@@ -23,6 +23,7 @@ const connectDB = async () => {
 const categories = [
   {
     name: 'Luxury Watches',
+    slug: 'luxury-watches',
     description: 'Premium and luxury timepieces from renowned brands',
     sortOrder: 1,
     seoTitle: 'Luxury Watches - Premium Timepieces',
@@ -30,6 +31,7 @@ const categories = [
   },
   {
     name: 'Sports Watches',
+    slug: 'sports-watches',
     description: 'Durable and functional watches for active lifestyle',
     sortOrder: 2,
     seoTitle: 'Sports Watches - Active Lifestyle Timepieces',
@@ -37,6 +39,7 @@ const categories = [
   },
   {
     name: 'Smart Watches',
+    slug: 'smart-watches',
     description: 'Technology-integrated timepieces with smart features',
     sortOrder: 3,
     seoTitle: 'Smart Watches - Technology Meets Time',
@@ -44,6 +47,7 @@ const categories = [
   },
   {
     name: 'Classic Watches',
+    slug: 'classic-watches',
     description: 'Timeless and elegant traditional timepieces',
     sortOrder: 4,
     seoTitle: 'Classic Watches - Timeless Elegance',
@@ -51,6 +55,7 @@ const categories = [
   },
   {
     name: 'Dress Watches',
+    slug: 'dress-watches',
     description: 'Sophisticated watches perfect for formal occasions',
     sortOrder: 5,
     seoTitle: 'Dress Watches - Formal Elegance',
@@ -129,7 +134,7 @@ const watchData = [
     ],
     category: 'Sports Watches',
     priceRange: [5000, 50000],
-    materials: ['stainless steel', 'rubber', 'ceramic'],
+    materials: ['stainless steel', 'ceramic', 'aluminum'],
     movements: ['quartz']
   },
   // Seiko
@@ -199,6 +204,9 @@ const colors = [
 // Strap materials
 const strapMaterials = ['leather', 'metal', 'rubber', 'fabric', 'ceramic'];
 
+// Case materials (valid enum values)
+const caseMaterials = ['stainless steel', 'titanium', 'gold', 'platinum', 'ceramic', 'carbon fiber', 'aluminum'];
+
 // Watch functions
 const watchFunctions = ['chronograph', 'date', 'day-date', 'moon phase', 'GMT', 'alarm', 'timer'];
 
@@ -252,6 +260,10 @@ const generateProduct = (brandData, model, categoryId, index) => {
     name: `${brandData.brand} ${model}`,
     brand: brandData.brand,
     model: model,
+    slug: `${brandData.brand}-${model}-${index}`
+      .toLowerCase()
+      .replace(/[^a-zA-Z0-9 ]/g, '')
+      .replace(/\s+/g, '-'),
     description: `Experience the perfect blend of style and functionality with the ${brandData.brand} ${model}. This exceptional timepiece represents the pinnacle of watchmaking craftsmanship, featuring precision engineering and elegant design that makes it perfect for any occasion. Whether you're attending a business meeting or enjoying a casual weekend, this watch delivers both performance and style.`,
     shortDescription: `Premium ${brandData.brand} ${model} with sophisticated design and reliable performance.`,
     category: categoryId,
@@ -259,7 +271,7 @@ const generateProduct = (brandData, model, categoryId, index) => {
     specifications: {
       movement: brandData.movements[Math.floor(Math.random() * brandData.movements.length)],
       caseSize: caseSize,
-      caseMaterial: brandData.materials[Math.floor(Math.random() * brandData.materials.length)],
+      caseMaterial: caseMaterials[Math.floor(Math.random() * caseMaterials.length)],
       dialColor: colors[Math.floor(Math.random() * colors.length)].name,
       crystalType: ['sapphire', 'mineral'][Math.floor(Math.random() * 2)],
       waterResistance: [30, 50, 100, 200, 300][Math.floor(Math.random() * 5)],
@@ -406,8 +418,12 @@ const seedData = async () => {
   } catch (error) {
     console.error('❌ Error seeding data:', error);
   } finally {
-    mongoose.connection.close();
-    console.log('🔌 Database connection closed');
+    try {
+      await mongoose.connection.close();
+      console.log('🔌 Database connection closed');
+    } catch (closeError) {
+      console.error('❌ Error closing database connection:', closeError);
+    }
   }
 };
 

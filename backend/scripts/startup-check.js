@@ -81,8 +81,6 @@ console.log(`${colors.blue}🗄️  Testing MongoDB connection...${colors.reset}
 async function checkMongoDB() {
   try {
     await mongoose.connect(process.env.MONGODB_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
       serverSelectionTimeoutMS: 5000
     });
     console.log(`${colors.green}✅ MongoDB connection successful${colors.reset}`);

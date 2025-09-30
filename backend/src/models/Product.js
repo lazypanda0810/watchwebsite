@@ -131,7 +131,7 @@ const productSchema = new mongoose.Schema({
   },
   slug: {
     type: String,
-    required: true,
+    required: false,
     unique: true,
     lowercase: true
   },
@@ -246,7 +246,7 @@ const productSchema = new mongoose.Schema({
 
 // Create slug from name and model before saving
 productSchema.pre('save', function(next) {
-  if (this.isModified('name') || this.isModified('model')) {
+  if (!this.slug || this.isModified('name') || this.isModified('model') || this.isModified('brand')) {
     this.slug = `${this.brand}-${this.model}-${this.name}`
       .toLowerCase()
       .replace(/[^a-zA-Z0-9 ]/g, '')
