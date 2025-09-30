@@ -20,6 +20,7 @@ import PaymentSuccess from "./pages/PaymentSuccess";
 import PaymentFailure from "./pages/PaymentFailure";
 import OrderHistoryPage from "./pages/OrderHistoryPage";
 import AdminDashboard from "./pages/AdminDashboard";
+import AdminLogin from "./pages/AdminLogin";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -73,8 +74,9 @@ const App = () => (
                   <OrderHistoryPage />
                 </ProtectedRoute>
               } />
-              <Route path="/admin" element={
-                <ProtectedRoute>
+              <Route path="/admin/login" element={<AdminLogin />} />
+              <Route path="/admin/dashboard" element={
+                <ProtectedRoute requireAdmin={true}>
                   <AdminDashboard />
                 </ProtectedRoute>
               } />

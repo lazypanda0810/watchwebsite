@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useApp } from '@/contexts/AppContext';
 import { Product } from '@/data/products';
@@ -31,6 +31,7 @@ const ProductListingPage = () => {
   
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [showFilters, setShowFilters] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   const categories = ['All', 'Men\'s Luxury', 'Women\'s Elegant', 'Smart Watch', 'Limited Edition', 'Couple Watches', 'Sports'];
   const colors = ['Black', 'Gold', 'Silver', 'Blue', 'Rose Gold', 'Carbon'];
@@ -43,22 +44,101 @@ const ProductListingPage = () => {
     { value: 'newest', label: 'Newest First' }
   ];
 
-  useEffect(() => {
-    const fetchParams = {
-      category: filters.category !== 'All' ? filters.category : undefined,
-      searchTerm: filters.search || undefined,
-      minPrice: filters.priceRange[0],
-      maxPrice: filters.priceRange[1],
-      colors: filters.colors.length > 0 ? filters.colors.join(',') : undefined,
-      straps: filters.straps.length > 0 ? filters.straps.join(',') : undefined,
-      rating: filters.rating > 0 ? filters.rating : undefined,
-      sortBy: filters.sortBy
-    };
-    
-    actions.fetchProducts(fetchParams);
-  }, [filters]);
+  // Debounced fetch function
+  const debouncedFetchProducts = useCallback(
+    (() => {
+      let timeoutId: NodeJS.Timeout;
+      return (fetchParams: any) => {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => {
+          actions.fetchProducts(fetchParams);
+        }, 300); // 300ms debounce
+      };
+    })(),
+    [actions]
+  );
 
-  const handleFilterChange = (key: string, value: any) => {
+  // Initial fetch on mount
+  useEffect(() => {
+    if (!mounted) {
+      setMounted(true);
+      actions.fetchProducts();
+    }
+  }, [mounted, actions]);
+
+  // Initial fetch on mount (without filters)
+  useEffect(() => {
+    if (!mounted) {
+      setMounted(true);
+      actions.fetchProducts(); // Fetch all products once
+    }
+  }, [mounted, actions]);
+
+  // Memoized filtered and sorted products for better performance
+  const filteredAndSortedProducts = useMemo(() => {
+    let filtered = [...products];
+
+    // Apply search filter
+    if (filters.search) {
+      const searchTerm = filters.search.toLowerCase();
+      filtered = filtered.filter(product => 
+        product.name.toLowerCase().includes(searchTerm) ||
+        product.category.toLowerCase().includes(searchTerm) ||
+        product.description.toLowerCase().includes(searchTerm)
+      );
+    }
+
+    // Apply category filter
+    if (filters.category && filters.category !== 'All') {
+      filtered = filtered.filter(product => 
+        product.category.toLowerCase().includes(filters.category.toLowerCase())
+      );
+    }
+
+    // Apply price range filter
+    filtered = filtered.filter(product => 
+      product.price >= filters.priceRange[0] && product.price <= filters.priceRange[1]
+    );
+
+    // Apply colors filter
+    if (filters.colors.length > 0) {
+      filtered = filtered.filter(product => 
+        product.colors.some(color => filters.colors.includes(color))
+      );
+    }
+
+    // Apply straps filter
+    if (filters.straps.length > 0) {
+      filtered = filtered.filter(product => 
+        product.straps.some(strap => filters.straps.includes(strap))
+      );
+    }
+
+    // Apply rating filter
+    if (filters.rating > 0) {
+      filtered = filtered.filter(product => product.rating >= filters.rating);
+    }
+
+    // Apply sorting
+    filtered.sort((a, b) => {
+      switch (filters.sortBy) {
+        case 'price-low':
+          return a.price - b.price;
+        case 'price-high':
+          return b.price - a.price;
+        case 'rating':
+          return b.rating - a.rating;
+        case 'newest':
+          return (b.isNew ? 1 : 0) - (a.isNew ? 1 : 0);
+        default:
+          return 0;
+      }
+    });
+
+    return filtered;
+  }, [products, filters]);
+
+  const handleFilterChange = useCallback((key: string, value: any) => {
     setFilters(prev => ({ ...prev, [key]: value }));
     
     // Update URL params
@@ -69,37 +149,16 @@ const ProductListingPage = () => {
       newParams.delete(key);
     }
     setSearchParams(newParams);
-  };
+  }, [searchParams, setSearchParams]);
 
-  const handleArrayFilterChange = (key: string, value: string, checked: boolean) => {
+  const handleArrayFilterChange = useCallback((key: string, value: string, checked: boolean) => {
     setFilters(prev => ({
       ...prev,
       [key]: checked 
         ? [...prev[key as keyof typeof prev] as string[], value]
         : (prev[key as keyof typeof prev] as string[]).filter(item => item !== value)
     }));
-  };
-
-  const filteredProducts = products.filter((product: Product) => {
-    // Apply client-side filters if needed
-    if (filters.rating > 0 && product.rating < filters.rating) return false;
-    return true;
-  });
-
-  const sortedProducts = [...filteredProducts].sort((a, b) => {
-    switch (filters.sortBy) {
-      case 'price-low':
-        return a.price - b.price;
-      case 'price-high':
-        return b.price - a.price;
-      case 'rating':
-        return b.rating - a.rating;
-      case 'newest':
-        return (a.isNew ? 1 : 0) - (b.isNew ? 1 : 0);
-      default:
-        return 0;
-    }
-  });
+  }, []);
 
   return (
     <div className="min-h-screen bg-background">
@@ -113,7 +172,7 @@ const ProductListingPage = () => {
               Premium Watches
             </h1>
             <p className="text-muted-foreground">
-              {filteredProducts.length} products found
+              {filteredAndSortedProducts.length} products found
             </p>
           </div>
           
@@ -278,9 +337,9 @@ const ProductListingPage = () => {
                   </Card>
                 ))}
               </div>
-            ) : sortedProducts.length > 0 ? (
+            ) : filteredAndSortedProducts.length > 0 ? (
               <div className={`grid ${viewMode === 'grid' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'} gap-6`}>
-                {sortedProducts.map((product) => (
+                {filteredAndSortedProducts.map((product) => (
                   <ProductCard key={product.id} product={product} />
                 ))}
               </div>

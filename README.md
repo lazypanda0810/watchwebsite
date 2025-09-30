@@ -22,6 +22,9 @@
 - **⚡ Performance**: Optimized with caching, compression, and efficient queries
 - **📊 Analytics Ready**: Built-in tracking and analytics support
 - **🌐 SEO Optimized**: Server-side rendering and meta tag management
+- **👑 Admin Dashboard**: Comprehensive admin panel for product, user, and order management
+
+> 📋 **Admin Access**: For admin dashboard setup and usage, see [ADMIN_GUIDE.md](./ADMIN_GUIDE.md)
 
 ---
 

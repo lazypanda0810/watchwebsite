@@ -121,17 +121,8 @@ const AppContext = createContext<{
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [state, dispatch] = useReducer(appReducer, initialState);
 
-  // Initialize with local data and check authentication
+  // Initialize authentication check
   useEffect(() => {
-    const initializeData = async () => {
-      try {
-        const { products } = await import('@/data/products');
-        dispatch({ type: 'SET_PRODUCTS', payload: products });
-      } catch (error) {
-        console.error('Failed to load local data:', error);
-      }
-    };
-    
     const checkAuthStatus = async () => {
       const token = localStorage.getItem('auth_token');
       if (token) {
@@ -155,7 +146,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       dispatch({ type: 'SET_LOADING', payload: false });
     };
     
-    initializeData();
     checkAuthStatus();
   }, []);
 
@@ -215,7 +205,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
     fetchProducts: async (filters?: any) => {
       try {
-        dispatch({ type: 'SET_LOADING', payload: true });
+        // Only show loading on initial fetch, not on filter changes
+        const isInitialFetch = !state.products || state.products.length === 0;
+        if (isInitialFetch) {
+          dispatch({ type: 'SET_LOADING', payload: true });
+        }
+        
         const response = await axios.get('/api/products', { params: filters });
         
         // Transform API data to match frontend expectations
@@ -239,12 +234,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         dispatch({ type: 'SET_PRODUCTS', payload: transformedProducts });
       } catch (error: any) {
         console.log('API failed, using local data');
-        // Fallback to local data
-        const { products } = await import('@/data/products');
-        dispatch({ type: 'SET_PRODUCTS', payload: products });
+        // Fallback to local data only if we don't have any products yet
+        if (!state.products || state.products.length === 0) {
+          const { products } = await import('@/data/products');
+          dispatch({ type: 'SET_PRODUCTS', payload: products });
+        }
         dispatch({ type: 'SET_ERROR', payload: null }); // Clear error since we have fallback data
       } finally {
-        dispatch({ type: 'SET_LOADING', payload: false });
+        if (!state.products || state.products.length === 0) {
+          dispatch({ type: 'SET_LOADING', payload: false });
+        }
       }
     },
 

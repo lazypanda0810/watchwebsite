@@ -35,6 +35,7 @@ const webhookRoutes = require('../routes/webhook');
 const productRoutes = require('./routes/productRoutes');
 const cartRoutes = require('./routes/cartRoutes');
 const orderRoutes = require('./routes/orderRoutes');
+const adminRoutes = require('./routes/adminRoutes');
 
 // Import middleware
 const { errorHandler, notFound } = require('./middleware/errorHandler');
@@ -161,6 +162,7 @@ app.use('/api/payment', paymentRoutes); // Payment routes
 app.use('/api/products', productRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api', orderRoutes); // checkout and orders
+app.use('/api/admin', adminRoutes); // Admin management routes
 
 // Admin routes (for categories via products router)
 // Additional admin-specific routes can be added here

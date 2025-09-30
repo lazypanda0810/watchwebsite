@@ -62,8 +62,24 @@ const AdminDashboard = () => {
   const fetchProducts = async () => {
     try {
       setLoading(true);
-      const response = await axios.get('/admin/products');
-      setProducts(response.data);
+      const response = await axios.get('/api/products');
+      const transformedProducts = response.data.data.products.map((product: any) => ({
+        id: product._id,
+        name: product.name,
+        price: product.basePrice,
+        originalPrice: product.discountPrice ? product.basePrice : undefined,
+        image: product.variants?.[0]?.images?.[0]?.url || '/placeholder.svg',
+        rating: parseFloat(product.rating?.average || '0'),
+        reviews: product.rating?.count || 0,
+        category: product.category?.name || '',
+        description: product.description || '',
+        features: product.specifications ? Object.values(product.specifications).filter(Boolean) : [],
+        colors: product.variants?.map((v: any) => v.color) || [],
+        straps: product.variants?.map((v: any) => v.strap?.material) || [],
+        isNew: product.isFeatured || false,
+        isLimited: false
+      }));
+      setProducts(transformedProducts);
     } catch (error) {
       console.error('Failed to fetch products:', error);
     } finally {
@@ -73,8 +89,8 @@ const AdminDashboard = () => {
 
   const fetchStats = async () => {
     try {
-      const response = await axios.get('/admin/stats');
-      setStats(response.data);
+      const response = await axios.get('/api/admin/stats');
+      setStats(response.data.data);
     } catch (error) {
       console.error('Failed to fetch stats:', error);
     }
@@ -94,13 +110,13 @@ const AdminDashboard = () => {
       };
 
       if (editingProduct) {
-        await axios.put(`/admin/products/${editingProduct.id}`, productData);
+        await axios.put(`/api/products/admin/products/${editingProduct.id}`, productData);
         toast({
           title: "Product Updated",
           description: "Product has been updated successfully",
         });
       } else {
-        await axios.post('/admin/products', productData);
+        await axios.post('/api/products/admin/products', productData);
         toast({
           title: "Product Created",
           description: "New product has been created successfully",
@@ -125,7 +141,7 @@ const AdminDashboard = () => {
     if (!confirm('Are you sure you want to delete this product?')) return;
     
     try {
-      await axios.delete(`/admin/products/${productId}`);
+      await axios.delete(`/api/products/admin/products/${productId}`);
       toast({
         title: "Product Deleted",
         description: "Product has been deleted successfully",
