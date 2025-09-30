@@ -1,0 +1,357 @@
+# =========================================
+# CHRONOS WATCH SHOP - ROOT .GITIGNORE
+# =========================================
+# This file covers the entire project structure
+# Individual directories may have their own .gitignore files
+
+# =========================================
+# DEPENDENCIES & NODE MODULES
+# =========================================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# Dependency directories
+jspm_packages/
+
+# Optional npm cache directory
+.npm
+
+# Optional yarn cache
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.yarn-integrity
+
+# =========================================
+# ENVIRONMENT VARIABLES & SECRETS
+# =========================================
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.staging
+
+# Secret files
+secrets/
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+
+# =========================================
+# BUILD OUTPUTS & DIST
+# =========================================
+dist/
+build/
+out/
+.next/
+.nuxt/
+.vuepress/dist
+
+# Frontend builds
+frontend/dist/
+frontend/build/
+frontend/.vite/
+
+# Backend builds
+backend/dist/
+backend/build/
+
+# =========================================
+# LOGS
+# =========================================
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+*.lcov
+
+# nyc test coverage
+.nyc_output
+
+# =========================================
+# DATABASES
+# =========================================
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+*.db-journal
+
+# MongoDB
+mongo-data/
+mongodb-data/
+
+# Redis
+redis-data/
+dump.rdb
+
+# =========================================
+# TEMPORARY FILES & CACHES
+# =========================================
+# Temporary folders
+tmp/
+temp/
+.tmp/
+.temp/
+
+# Cache directories
+.cache/
+.parcel-cache/
+.eslintcache
+.stylelintcache
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Microbundle cache
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+
+# =========================================
+# IDE & EDITOR FILES
+# =========================================
+# VSCode
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+
+# JetBrains IDEs
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Vim
+*.swp
+*.swo
+*~
+
+# Emacs
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\#*
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Atom
+.atom/
+
+# =========================================
+# OPERATING SYSTEM FILES
+# =========================================
+# macOS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msm
+*.msp
+
+# Linux
+*~
+.directory
+.Trash-*
+
+# =========================================
+# DOCKER & CONTAINERIZATION
+# =========================================
+# Docker
+docker-compose.override.yml
+.dockerignore
+Dockerfile.dev
+Dockerfile.prod
+
+# Kubernetes
+*.yaml.local
+*.yml.local
+
+# =========================================
+# CLOUD & DEPLOYMENT
+# =========================================
+# Serverless Framework
+.serverless/
+
+# FuseBox cache
+.fusebox/
+
+# DynamoDB Local files
+.dynamodb/
+
+# TernJS port file
+.tern-port
+
+# Stores VSCode versions used for testing VSCode extensions
+.vscode-test
+
+# AWS
+.aws/
+
+# Vercel
+.vercel
+
+# Netlify
+.netlify
+
+# =========================================
+# TESTING
+# =========================================
+# Jest
+jest.config.local.js
+coverage/
+
+# Cypress
+cypress/videos/
+cypress/screenshots/
+
+# Playwright
+test-results/
+playwright-report/
+playwright/.cache/
+
+# =========================================
+# PACKAGE MANAGERS
+# =========================================
+# Yarn
+yarn-error.log
+
+# pnpm
+.pnpm-debug.log*
+
+# Lerna
+lerna-debug.log*
+
+# Rush
+common/temp/
+
+# =========================================
+# UPLOADS & USER CONTENT
+# =========================================
+uploads/
+user-uploads/
+public/uploads/
+static/uploads/
+
+# =========================================
+# BACKUP FILES
+# =========================================
+*.backup
+*.bak
+*.orig
+*.rej
+
+# =========================================
+# CERTIFICATES & SECURITY
+# =========================================
+# SSL certificates
+*.pem
+*.crt
+*.key
+*.p12
+*.pfx
+
+# GPG keys
+*.gpg
+*.asc
+
+# =========================================
+# MONITORING & ANALYTICS
+# =========================================
+# Sentry
+.sentryclirc
+
+# New Relic
+newrelic_agent.log
+
+# =========================================
+# DOCUMENTATION BUILD
+# =========================================
+# Sphinx documentation
+docs/_build/
+
+# MkDocs documentation
+/site
+
+# =========================================
+# LOCAL DEVELOPMENT
+# =========================================
+# Local development overrides
+*.local
+local.*
+
+# Development databases
+dev.db
+development.db
+
+# Local configuration
+config.local.json
+settings.local.json
+
+# =========================================
+# MISC
+# =========================================
+# MacOS Spotlight
+.Spotlight-V100
+
+# Vim swap files
+.*.sw?
+
+# Lock files (keep yarn.lock and package-lock.json for consistency)
+# Uncomment the line below if you want to ignore lock files
+# package-lock.json
+# yarn.lock
+
+# Archive files
+*.zip
+*.tar.gz
+*.tgz
+*.rar
+*.7z
+
+# Generated files
+*.generated.*

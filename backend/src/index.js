@@ -10,6 +10,17 @@ const hpp = require('hpp');
 const session = require('express-session');
 require('dotenv').config();
 
+// Validate critical environment variables
+const requiredEnvVars = ['MONGODB_URI', 'SESSION_SECRET'];
+const missingEnvVars = requiredEnvVars.filter(envVar => !process.env[envVar]);
+
+if (missingEnvVars.length > 0) {
+  console.error('❌ Missing required environment variables:');
+  missingEnvVars.forEach(envVar => console.error(`   - ${envVar}`));
+  console.error('💡 Please check your .env file');
+  process.exit(1);
+}
+
 // Import passport configuration
 const { passport } = require('../middleware/auth');
 
@@ -47,7 +58,7 @@ app.use(helmet({
 
 // CORS configuration
 app.use(cors({
-  origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
+  origin: process.env.CORS_ORIGIN || 'http://localhost:8080',
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']

@@ -3,8 +3,16 @@ const errorHandler = (err, req, res, next) => {
   let error = { ...err };
   error.message = err.message;
 
-  // Log error
-  console.error('Error:', err);
+  // Log error with more details
+  console.error('❌ Error Details:', {
+    message: err.message,
+    stack: process.env.NODE_ENV === 'development' ? err.stack : undefined,
+    url: req.originalUrl,
+    method: req.method,
+    ip: req.ip,
+    userAgent: req.get('User-Agent'),
+    timestamp: new Date().toISOString()
+  });
 
   // Mongoose bad ObjectId
   if (err.name === 'CastError') {
@@ -17,7 +25,8 @@ const errorHandler = (err, req, res, next) => {
 
   // Mongoose duplicate key
   if (err.code === 11000) {
-    const message = 'Duplicate field value entered';
+    const duplicateField = Object.keys(err.keyValue)[0];
+    const message = `Duplicate ${duplicateField}: ${err.keyValue[duplicateField]} already exists`;
     error = {
       message,
       statusCode: 400
@@ -35,7 +44,7 @@ const errorHandler = (err, req, res, next) => {
 
   // JWT errors
   if (err.name === 'JsonWebTokenError') {
-    const message = 'Invalid token';
+    const message = 'Invalid token. Please log in again.';
     error = {
       message,
       statusCode: 401
@@ -43,10 +52,28 @@ const errorHandler = (err, req, res, next) => {
   }
 
   if (err.name === 'TokenExpiredError') {
-    const message = 'Token expired';
+    const message = 'Token expired. Please log in again.';
     error = {
       message,
       statusCode: 401
+    };
+  }
+
+  // Multer file upload errors
+  if (err.code === 'LIMIT_FILE_SIZE') {
+    const message = 'File too large. Maximum size is 10MB.';
+    error = {
+      message,
+      statusCode: 400
+    };
+  }
+
+  // MongoDB connection errors
+  if (err.name === 'MongoNetworkError' || err.name === 'MongooseServerSelectionError') {
+    const message = 'Database connection error. Please try again later.';
+    error = {
+      message,
+      statusCode: 503
     };
   }
 

@@ -14,6 +14,9 @@ yarn-error.log*
 # Logs
 logs
 *.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
 # Runtime data
 pids
@@ -60,3 +63,33 @@ build/
 # OS
 .DS_Store
 Thumbs.db
+
+# Temporary files
+tmp/
+temp/
+
+# Uploads
+uploads/
+
+# Docker
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Jest
+jest.config.js
+
+# ESLint
+.eslintrc.js
+.eslintcache
+
+# Prettier
+.prettierrc
+.prettierignore
+
+# Local SSL certificates
+*.pem
+
+# Backup files
+*.bak
+*.backup

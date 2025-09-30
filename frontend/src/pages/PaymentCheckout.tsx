@@ -8,6 +8,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import { CreditCard, Shield, RefreshCw, CheckCircle, AlertCircle, IndianRupee } from 'lucide-react';
+import { get, post, API_ENDPOINTS, API_CONFIG } from '@/lib/api';
 
 // Razorpay script loader
 const loadRazorpayScript = () => {
@@ -79,11 +80,8 @@ const PaymentCheckout: React.FC<CheckoutProps> = ({
       }
       setScriptLoaded(true);
 
-      // Get payment configuration
-      const configResponse = await fetch('/api/payment/config', {
-        credentials: 'include'
-      });
-      const configData = await configResponse.json();
+      // Get payment configuration using the API utility
+      const configData = await get(API_ENDPOINTS.PAYMENT.CONFIG);
       
       if (configData.success) {
         setPaymentConfig(configData);
@@ -93,8 +91,8 @@ const PaymentCheckout: React.FC<CheckoutProps> = ({
       } else {
         setError('Failed to load payment configuration.');
       }
-    } catch (err) {
-      setError('Failed to initialize payment system.');
+    } catch (err: any) {
+      setError(err.message || 'Failed to initialize payment system.');
     }
   };
 
@@ -138,26 +136,17 @@ const PaymentCheckout: React.FC<CheckoutProps> = ({
     setError('');
 
     try {
-      // Create Razorpay order
-      const orderResponse = await fetch('/api/payment/create-order', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify({
-          amount: amount,
-          currency: 'INR',
-          notes: {
-            customerName: customerDetails.name,
-            customerEmail: customerDetails.email,
-            customerPhone: customerDetails.phone,
-            items: JSON.stringify(items)
-          }
-        }),
+      // Create Razorpay order using the API utility
+      const orderData = await post(API_ENDPOINTS.PAYMENT.CREATE_ORDER, {
+        amount: amount,
+        currency: 'INR',
+        notes: {
+          customerName: customerDetails.name,
+          customerEmail: customerDetails.email,
+          customerPhone: customerDetails.phone,
+          items: JSON.stringify(items)
+        }
       });
-
-      const orderData = await orderResponse.json();
 
       if (!orderData.success) {
         throw new Error(orderData.error || 'Failed to create payment order');
@@ -202,20 +191,11 @@ const PaymentCheckout: React.FC<CheckoutProps> = ({
 
   const verifyPayment = async (paymentResponse: any) => {
     try {
-      const verifyResponse = await fetch('/api/payment/verify', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify({
-          razorpay_order_id: paymentResponse.razorpay_order_id,
-          razorpay_payment_id: paymentResponse.razorpay_payment_id,
-          razorpay_signature: paymentResponse.razorpay_signature,
-        }),
+      const verifyData = await post(API_ENDPOINTS.PAYMENT.VERIFY, {
+        razorpay_order_id: paymentResponse.razorpay_order_id,
+        razorpay_payment_id: paymentResponse.razorpay_payment_id,
+        razorpay_signature: paymentResponse.razorpay_signature,
       });
-
-      const verifyData = await verifyResponse.json();
 
       if (verifyData.success) {
         // Redirect to success page

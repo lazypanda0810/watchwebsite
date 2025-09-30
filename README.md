@@ -28,6 +28,7 @@
 ## 🛠️ Tech Stack
 
 ### Frontend
+
 - **React 18.3.1** - Modern React with Hooks
 - **TypeScript** - Type-safe development
 - **Vite 5.4.20** - Fast build tool and dev server
@@ -38,6 +39,7 @@
 - **Lucide Icons** - Beautiful icon library
 
 ### Backend
+
 - **Node.js 18+** - JavaScript runtime
 - **Express.js** - Web application framework
 - **MongoDB** - NoSQL database
@@ -49,6 +51,7 @@
 - **Winston** - Logging library
 
 ### Security & Tools
+
 - **Helmet** - Security headers
 - **CORS** - Cross-origin resource sharing
 - **Rate Limiting** - Request rate limiting
@@ -72,6 +75,42 @@ Before running this application, make sure you have the following installed:
 
 ---
 
+## 🚀 Quick Start
+
+For a fast setup, run the automated setup script:
+
+```bash
+# Clone the repository
+git clone https://github.com/lazypanda0810/chronos-style-shop-08.git
+cd chronos-style-shop-08
+
+# Run the automated setup script
+./setup.sh
+```
+
+This script will:
+
+- ✅ Check all prerequisites (Node.js, npm, MongoDB)
+- ✅ Install all dependencies
+- ✅ Create environment files
+- ✅ Validate configurations
+- ✅ Provide next steps
+
+### Manual Validation
+
+To check your setup at any time:
+
+```bash
+# Run complete validation
+node validate.js
+
+# Or check individual components
+cd backend && npm run check
+cd frontend && npm run check
+```
+
+---
+
 ## 🚀 Installation Instructions
 
 ### 1. Clone the Repository
@@ -90,13 +129,16 @@ cd backend
 # Install dependencies
 npm install
 
-# Install additional packages for authentication and payments
-npm install passport passport-google-oauth20 express-session nodemailer razorpay crypto-js uuid dotenv
-
 # Copy environment file
 cp .env.example .env
 
 # Edit .env file with your credentials (see Environment Setup section)
+
+# Run startup validation check
+npm run check
+
+# If all checks pass, start development server
+npm run dev
 ```
 
 ### 3. Frontend Setup
@@ -194,15 +236,28 @@ VITE_RAZORPAY_KEY_ID=rzp_test_your_key_id
 ### Development Mode
 
 1. **Start Backend Server**:
+
 ```bash
-cd backend/src
-node index.js
+cd backend
+# Install dependencies
+npm install
+# Copy and configure environment
+cp .env.example .env
+# Edit .env with your configurations
+# Run startup checks and start development server
+npm run dev
 # Server runs on http://localhost:5000
 ```
 
 2. **Start Frontend Server**:
+
 ```bash
 cd frontend
+# Install dependencies
+npm install
+# Copy and configure environment
+cp .env.example .env
+# Edit .env with your configurations
 npm run dev
 # Frontend runs on http://localhost:8080
 ```
@@ -210,17 +265,21 @@ npm run dev
 3. **Access the Application**:
    - Frontend: http://localhost:8080
    - Backend API: http://localhost:5000
+   - Authentication: http://localhost:8080/secure-login
    - Payment Checkout: http://localhost:8080/payment/checkout
+   - API Health Check: http://localhost:5000/health
 
 ### Production Mode
 
 1. **Build Frontend**:
+
 ```bash
 cd frontend
 npm run build
 ```
 
 2. **Start Backend**:
+
 ```bash
 cd backend
 NODE_ENV=production node src/index.js
@@ -232,52 +291,52 @@ NODE_ENV=production node src/index.js
 
 ### Authentication Endpoints
 
-| Method | Endpoint | Description | Auth Required |
-|--------|----------|-------------|---------------|
-| `GET` | `/auth/google` | Initiate Google OAuth | No |
-| `GET` | `/auth/google/callback` | OAuth callback | No |
-| `POST` | `/auth/verify-code` | Verify email code | Yes |
-| `POST` | `/auth/resend-code` | Resend verification code | Yes |
-| `GET` | `/auth/user` | Get current user | Yes |
-| `POST` | `/auth/logout` | Logout user | Yes |
-| `GET` | `/auth/config` | Check OAuth configuration | No |
+| Method | Endpoint                | Description               | Auth Required |
+| ------ | ----------------------- | ------------------------- | ------------- |
+| `GET`  | `/auth/google`          | Initiate Google OAuth     | No            |
+| `GET`  | `/auth/google/callback` | OAuth callback            | No            |
+| `POST` | `/auth/verify-code`     | Verify email code         | Yes           |
+| `POST` | `/auth/resend-code`     | Resend verification code  | Yes           |
+| `GET`  | `/auth/user`            | Get current user          | Yes           |
+| `POST` | `/auth/logout`          | Logout user               | Yes           |
+| `GET`  | `/auth/config`          | Check OAuth configuration | No            |
 
 ### Payment Endpoints
 
-| Method | Endpoint | Description | Auth Required |
-|--------|----------|-------------|---------------|
-| `GET` | `/api/payment/config` | Payment configuration | No |
-| `POST` | `/api/payment/create-order` | Create payment order | Yes |
-| `POST` | `/api/payment/verify` | Verify payment | Yes |
-| `GET` | `/api/payment/status/:id` | Get payment status | Yes |
-| `POST` | `/api/payment/refund` | Initiate refund | Yes |
-| `GET` | `/api/payment/success-details` | Get success details | No |
+| Method | Endpoint                       | Description           | Auth Required |
+| ------ | ------------------------------ | --------------------- | ------------- |
+| `GET`  | `/api/payment/config`          | Payment configuration | No            |
+| `POST` | `/api/payment/create-order`    | Create payment order  | Yes           |
+| `POST` | `/api/payment/verify`          | Verify payment        | Yes           |
+| `GET`  | `/api/payment/status/:id`      | Get payment status    | Yes           |
+| `POST` | `/api/payment/refund`          | Initiate refund       | Yes           |
+| `GET`  | `/api/payment/success-details` | Get success details   | No            |
 
 ### Webhook Endpoints
 
-| Method | Endpoint | Description | Auth Required |
-|--------|----------|-------------|---------------|
-| `POST` | `/webhook/razorpay` | Razorpay webhook handler | No |
-| `POST` | `/webhook/test` | Test webhook endpoint | No |
+| Method | Endpoint            | Description              | Auth Required |
+| ------ | ------------------- | ------------------------ | ------------- |
+| `POST` | `/webhook/razorpay` | Razorpay webhook handler | No            |
+| `POST` | `/webhook/test`     | Test webhook endpoint    | No            |
 
 ### Product Endpoints
 
-| Method | Endpoint | Description | Auth Required |
-|--------|----------|-------------|---------------|
-| `GET` | `/api/products` | Get all products | No |
-| `GET` | `/api/products/:id` | Get product by ID | No |
-| `POST` | `/api/products` | Create product | Admin |
-| `PUT` | `/api/products/:id` | Update product | Admin |
-| `DELETE` | `/api/products/:id` | Delete product | Admin |
+| Method   | Endpoint            | Description       | Auth Required |
+| -------- | ------------------- | ----------------- | ------------- |
+| `GET`    | `/api/products`     | Get all products  | No            |
+| `GET`    | `/api/products/:id` | Get product by ID | No            |
+| `POST`   | `/api/products`     | Create product    | Admin         |
+| `PUT`    | `/api/products/:id` | Update product    | Admin         |
+| `DELETE` | `/api/products/:id` | Delete product    | Admin         |
 
 ### Order Endpoints
 
-| Method | Endpoint | Description | Auth Required |
-|--------|----------|-------------|---------------|
-| `GET` | `/api/orders` | Get user orders | Yes |
-| `GET` | `/api/orders/:id` | Get order by ID | Yes |
-| `POST` | `/api/orders` | Create order | Yes |
-| `PUT` | `/api/orders/:id` | Update order | Yes |
+| Method | Endpoint          | Description     | Auth Required |
+| ------ | ----------------- | --------------- | ------------- |
+| `GET`  | `/api/orders`     | Get user orders | Yes           |
+| `GET`  | `/api/orders/:id` | Get order by ID | Yes           |
+| `POST` | `/api/orders`     | Create order    | Yes           |
+| `PUT`  | `/api/orders/:id` | Update order    | Yes           |
 
 ---
 
@@ -351,12 +410,12 @@ sequenceDiagram
 
 Use these test card numbers for development:
 
-| Card Number | Description | Expected Result |
-|-------------|-------------|----------------|
-| `4111 1111 1111 1111` | Visa | Success |
-| `5555 5555 5555 4444` | Mastercard | Success |
-| `4000 0000 0000 0002` | Visa | Declined |
-| `4000 0000 0000 0069` | Visa | Expired |
+| Card Number           | Description | Expected Result |
+| --------------------- | ----------- | --------------- |
+| `4111 1111 1111 1111` | Visa        | Success         |
+| `5555 5555 5555 4444` | Mastercard  | Success         |
+| `4000 0000 0000 0002` | Visa        | Declined        |
+| `4000 0000 0000 0069` | Visa        | Expired         |
 
 ---
 
@@ -365,18 +424,21 @@ Use these test card numbers for development:
 ### Manual Testing
 
 1. **Authentication Testing**:
+
    - Visit: http://localhost:8080/secure-login
    - Test Google OAuth flow
    - Verify email code functionality
    - Test logout functionality
 
 2. **Payment Testing**:
+
    - Visit: http://localhost:8080/payment/checkout
    - Fill customer details
    - Use test card numbers
    - Verify success/failure flows
 
 3. **API Testing**:
+
 ```bash
 # Test payment configuration
 curl http://localhost:5000/api/payment/config
@@ -410,11 +472,96 @@ npm run test:e2e
 
 ---
 
+## 🔧 Troubleshooting
+
+### Common Issues and Solutions
+
+#### 1. Backend Won't Start
+
+```bash
+# Check if MongoDB is running
+mongosh --eval "quit()"
+
+# If MongoDB not running, start it:
+# macOS: brew services start mongodb-community
+# Linux: sudo systemctl start mongod
+# Windows: net start MongoDB
+
+# Check environment variables
+cd backend && npm run check
+```
+
+#### 2. Frontend Build Errors
+
+```bash
+# Clear node modules and reinstall
+cd frontend
+rm -rf node_modules package-lock.json
+npm install
+
+# Check environment configuration
+npm run check
+```
+
+#### 3. API Connection Issues
+
+```bash
+# Check if backend is running
+curl http://localhost:5000/health
+
+# Check CORS configuration in backend/.env
+# Should be: CORS_ORIGIN=http://localhost:8080
+```
+
+#### 4. Payment Gateway Issues
+
+```bash
+# Verify Razorpay configuration
+curl http://localhost:5000/api/payment/config
+
+# Check environment variables:
+# RAZORPAY_KEY_ID=rzp_test_your_key_id
+# RAZORPAY_KEY_SECRET=your_key_secret
+```
+
+#### 5. Google OAuth Issues
+
+```bash
+# Check OAuth configuration
+curl http://localhost:5000/auth/config
+
+# Verify Google Cloud Console settings:
+# - Authorized redirect URIs
+# - Client ID and Secret in .env
+```
+
+### Environment Variables Checklist
+
+#### Backend (.env)
+
+- [ ] `MONGODB_URI` - MongoDB connection string
+- [ ] `SESSION_SECRET` - Session encryption key
+- [ ] `CORS_ORIGIN=http://localhost:8080` - Frontend URL
+- [ ] `GOOGLE_CLIENT_ID` - Google OAuth client ID
+- [ ] `GOOGLE_CLIENT_SECRET` - Google OAuth secret
+- [ ] `RAZORPAY_KEY_ID` - Razorpay key
+- [ ] `RAZORPAY_KEY_SECRET` - Razorpay secret
+- [ ] `EMAIL_USER` - Gmail address
+- [ ] `EMAIL_PASSWORD` - Gmail app password
+
+#### Frontend (.env)
+
+- [ ] `VITE_API_BASE_URL=http://localhost:5000` - Backend URL
+- [ ] `VITE_RAZORPAY_KEY_ID` - Razorpay public key
+
+---
+
 ## 🚀 Deployment Guidelines
 
 ### Heroku Deployment
 
 1. **Prepare for deployment**:
+
 ```bash
 # Install Heroku CLI
 npm install -g heroku
@@ -427,6 +574,7 @@ heroku create chronos-watch-shop
 ```
 
 2. **Configure environment variables**:
+
 ```bash
 heroku config:set NODE_ENV=production
 heroku config:set MONGODB_URI=your_mongodb_atlas_uri
@@ -436,6 +584,7 @@ heroku config:set RAZORPAY_KEY_ID=your_razorpay_key
 ```
 
 3. **Deploy**:
+
 ```bash
 git push heroku main
 ```
@@ -443,11 +592,13 @@ git push heroku main
 ### Vercel Deployment (Frontend)
 
 1. **Install Vercel CLI**:
+
 ```bash
 npm install -g vercel
 ```
 
 2. **Deploy frontend**:
+
 ```bash
 cd frontend
 vercel --prod
@@ -476,13 +627,14 @@ The application uses Winston for structured logging:
 
 ```javascript
 // Log levels: error, warn, info, debug
-logger.info('Payment successful', { paymentId, userId, amount });
-logger.error('Payment failed', { error: error.message, paymentId });
+logger.info("Payment successful", { paymentId, userId, amount });
+logger.error("Payment failed", { error: error.message, paymentId });
 ```
 
 ### Analytics Integration
 
 Ready for integration with:
+
 - **Google Analytics 4**
 - **Mixpanel**
 - **Amplitude**
@@ -504,14 +656,14 @@ Ready for integration with:
 // Rate limiting configuration
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 5 // limit each IP to 5 requests per windowMs
+  max: 5, // limit each IP to 5 requests per windowMs
 });
 
 // CORS configuration
 const corsOptions = {
   origin: process.env.CORS_ORIGIN,
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE']
+  methods: ["GET", "POST", "PUT", "DELETE"],
 };
 ```
 
@@ -521,12 +673,12 @@ const corsOptions = {
 // Razorpay configuration
 const razorpayOptions = {
   theme: {
-    color: '#3B82F6'
+    color: "#3B82F6",
   },
   modal: {
     backdropclose: false,
-    escape: false
-  }
+    escape: false,
+  },
 };
 ```
 
@@ -619,7 +771,7 @@ furnished to do so, subject to the following conditions...
 
 **Built with ❤️ by the Chronos Watch Shop Team**
 
-*Happy coding! ⌚️*
+_Happy coding! ⌚️_
 
 - Backend runs on port 3000 (by default)
 - Frontend runs on port 3001 (by default)
