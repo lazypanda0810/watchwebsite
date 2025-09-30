@@ -4,9 +4,52 @@ import { Badge } from "@/components/ui/badge";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import ProductCard from "@/components/ProductCard";
-import { products } from "@/data/products";
+import { Product } from "@/data/products";
+import { useState, useEffect } from "react";
+import axios from "axios";
 
 const HomePage = () => {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await axios.get('/api/products?limit=8');
+        if (response.data.success && response.data.data?.products) {
+          const transformedProducts = response.data.data.products.map((product: any) => ({
+            id: product._id,
+            name: product.name,
+            price: product.basePrice,
+            originalPrice: product.discountPrice ? product.basePrice : undefined,
+            image: product.variants?.[0]?.images?.[0]?.url || '/placeholder.svg',
+            rating: parseFloat(product.rating?.average || '0'),
+            reviews: product.rating?.count || 0,
+            category: product.category?.name || '',
+            description: product.description || '',
+            features: product.specifications ? Object.values(product.specifications).filter(Boolean) : [],
+            colors: product.variants?.map((v: any) => v.color) || [],
+            straps: product.variants?.map((v: any) => v.strap?.material) || [],
+            isNew: product.isFeatured || false,
+            isLimited: false,
+            totalStock: product.totalStock || 0,
+            brand: product.brand || '',
+            model: product.model || ''
+          }));
+          setProducts(transformedProducts);
+        }
+      } catch (error) {
+        console.error('Failed to fetch products:', error);
+        // Fallback to empty array if API fails
+        setProducts([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
   const featuredProducts = products.slice(0, 4);
   const newArrivals = products.filter(p => p.isNew).slice(0, 3);
   const bestSellers = products.slice(2, 5);
@@ -70,9 +113,24 @@ const HomePage = () => {
             </Button>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {newArrivals.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
+            {loading ? (
+              // Loading skeletons
+              Array.from({ length: 3 }).map((_, index) => (
+                <div key={index} className="animate-pulse">
+                  <div className="bg-gray-200 aspect-square rounded-lg mb-4"></div>
+                  <div className="h-4 bg-gray-200 rounded mb-2"></div>
+                  <div className="h-4 bg-gray-200 rounded w-2/3"></div>
+                </div>
+              ))
+            ) : newArrivals.length > 0 ? (
+              newArrivals.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))
+            ) : (
+              <div className="col-span-full text-center py-8">
+                <p className="text-muted-foreground">No new arrivals available</p>
+              </div>
+            )}
           </div>
         </div>
       </section>
@@ -137,9 +195,24 @@ const HomePage = () => {
             </Button>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {bestSellers.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
+            {loading ? (
+              // Loading skeletons
+              Array.from({ length: 3 }).map((_, index) => (
+                <div key={index} className="animate-pulse">
+                  <div className="bg-gray-200 aspect-square rounded-lg mb-4"></div>
+                  <div className="h-4 bg-gray-200 rounded mb-2"></div>
+                  <div className="h-4 bg-gray-200 rounded w-2/3"></div>
+                </div>
+              ))
+            ) : bestSellers.length > 0 ? (
+              bestSellers.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))
+            ) : (
+              <div className="col-span-full text-center py-8">
+                <p className="text-muted-foreground">No best sellers available</p>
+              </div>
+            )}
           </div>
         </div>
       </section>

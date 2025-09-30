@@ -255,10 +255,105 @@ const updateOrderStatus = async (req, res) => {
   }
 };
 
+// @desc    Clear all sample/seed data (CAUTION: Production only)
+// @route   DELETE /api/admin/clear-data
+// @access  Private/Admin
+const clearSampleData = async (req, res) => {
+  try {
+    // Safety check - only allow in development or if explicitly confirmed
+    if (process.env.NODE_ENV === 'production' && !req.body.confirmClear) {
+      return res.status(400).json({
+        success: false,
+        message: 'This operation requires explicit confirmation in production'
+      });
+    }
+
+    // Clear all collections except admin users
+    await Promise.all([
+      Product.deleteMany({}),
+      Category.deleteMany({}),
+      Order.deleteMany({}),
+      User.deleteMany({ role: 'customer' }) // Keep admin users
+    ]);
+
+    res.json({
+      success: true,
+      message: 'All sample data has been cleared successfully',
+      warning: 'Database is now empty except for admin users'
+    });
+  } catch (error) {
+    console.error('Clear sample data error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error',
+      error: error.message
+    });
+  }
+};
+
+// @desc    Initialize production data with default categories
+// @route   POST /api/admin/init-production
+// @access  Private/Admin
+const initProductionData = async (req, res) => {
+  try {
+    // Create default categories for production
+    const defaultCategories = [
+      {
+        name: 'Luxury Watches',
+        slug: 'luxury-watches',
+        description: 'Premium luxury timepieces',
+        isActive: true,
+        sortOrder: 1
+      },
+      {
+        name: 'Sports Watches',
+        slug: 'sports-watches', 
+        description: 'Durable sports and fitness watches',
+        isActive: true,
+        sortOrder: 2
+      },
+      {
+        name: 'Smart Watches',
+        slug: 'smart-watches',
+        description: 'Technology-enabled smartwatches',
+        isActive: true,
+        sortOrder: 3
+      },
+      {
+        name: 'Classic Watches',
+        slug: 'classic-watches',
+        description: 'Timeless classic designs',
+        isActive: true,
+        sortOrder: 4
+      }
+    ];
+
+    // Insert default categories
+    await Category.insertMany(defaultCategories);
+
+    res.json({
+      success: true,
+      message: 'Production environment initialized successfully',
+      data: {
+        categoriesCreated: defaultCategories.length
+      }
+    });
+  } catch (error) {
+    console.error('Init production data error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error',
+      error: error.message
+    });
+  }
+};
+
 module.exports = {
   getAdminStats,
   getAdminUsers,
   updateUserStatus,
   getAdminOrders,
-  updateOrderStatus
+  updateOrderStatus,
+  clearSampleData,
+  initProductionData
 };

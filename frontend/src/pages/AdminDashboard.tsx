@@ -11,7 +11,7 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Plus, Edit, Trash2, Upload, LogOut, Package, Users, ShoppingCart, TrendingUp } from 'lucide-react';
+import { Plus, Edit, Trash2, Upload, LogOut, Package, Users, ShoppingCart, TrendingUp, Eye, CheckCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Product } from '@/data/products';
 import axios from 'axios';
@@ -23,6 +23,8 @@ const AdminDashboard = () => {
   const { toast } = useToast();
   
   const [products, setProducts] = useState<Product[]>([]);
+  const [orders, setOrders] = useState<any[]>([]);
+  const [users, setUsers] = useState<any[]>([]);
   const [stats, setStats] = useState({
     totalProducts: 0,
     totalOrders: 0,
@@ -35,6 +37,8 @@ const AdminDashboard = () => {
   
   const [productForm, setProductForm] = useState({
     name: '',
+    brand: '',
+    model: '',
     price: 0,
     originalPrice: 0,
     image: '',
@@ -45,6 +49,7 @@ const AdminDashboard = () => {
     features: [''],
     colors: [''],
     straps: [''],
+    totalStock: 10,
     isNew: false,
     isLimited: false,
   });
@@ -57,31 +62,45 @@ const AdminDashboard = () => {
     
     fetchProducts();
     fetchStats();
+    fetchOrders();
+    fetchUsers();
   }, [user, navigate]);
 
   const fetchProducts = async () => {
     try {
       setLoading(true);
-      const response = await axios.get('/api/products');
-      const transformedProducts = response.data.data.products.map((product: any) => ({
-        id: product._id,
-        name: product.name,
-        price: product.basePrice,
-        originalPrice: product.discountPrice ? product.basePrice : undefined,
-        image: product.variants?.[0]?.images?.[0]?.url || '/placeholder.svg',
-        rating: parseFloat(product.rating?.average || '0'),
-        reviews: product.rating?.count || 0,
-        category: product.category?.name || '',
-        description: product.description || '',
-        features: product.specifications ? Object.values(product.specifications).filter(Boolean) : [],
-        colors: product.variants?.map((v: any) => v.color) || [],
-        straps: product.variants?.map((v: any) => v.strap?.material) || [],
-        isNew: product.isFeatured || false,
-        isLimited: false
-      }));
-      setProducts(transformedProducts);
+      const response = await axios.get('/api/products', {
+        withCredentials: true
+      });
+      if (response.data.success && response.data.data?.products) {
+        const transformedProducts = response.data.data.products.map((product: any) => ({
+          id: product._id,
+          name: product.name,
+          price: product.basePrice,
+          originalPrice: product.discountPrice ? product.basePrice : undefined,
+          image: product.variants?.[0]?.images?.[0]?.url || '/placeholder.svg',
+          rating: parseFloat(product.rating?.average || '0'),
+          reviews: product.rating?.count || 0,
+          category: product.category?.name || '',
+          description: product.description || '',
+          features: product.specifications ? Object.values(product.specifications).filter(Boolean) : [],
+          colors: product.variants?.map((v: any) => v.color) || [],
+          straps: product.variants?.map((v: any) => v.strap?.material) || [],
+          isNew: product.isFeatured || false,
+          isLimited: false,
+          totalStock: product.totalStock || 0,
+          brand: product.brand || '',
+          model: product.model || ''
+        }));
+        setProducts(transformedProducts);
+      }
     } catch (error) {
       console.error('Failed to fetch products:', error);
+      toast({
+        title: "Error",
+        description: "Failed to fetch products",
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }
@@ -89,10 +108,50 @@ const AdminDashboard = () => {
 
   const fetchStats = async () => {
     try {
-      const response = await axios.get('/api/admin/stats');
-      setStats(response.data.data);
+      const response = await axios.get('/api/admin/stats', {
+        withCredentials: true
+      });
+      if (response.data.success) {
+        setStats({
+          totalProducts: response.data.data.totalProducts || 0,
+          totalOrders: response.data.data.totalOrders || 0,
+          totalUsers: response.data.data.totalUsers || 0,
+          revenue: response.data.data.totalRevenue || 0
+        });
+      }
     } catch (error) {
       console.error('Failed to fetch stats:', error);
+      toast({
+        title: "Error",
+        description: "Failed to fetch dashboard statistics",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const fetchOrders = async () => {
+    try {
+      const response = await axios.get('/api/admin/orders', {
+        withCredentials: true
+      });
+      if (response.data.success) {
+        setOrders(response.data.data.orders || []);
+      }
+    } catch (error) {
+      console.error('Failed to fetch orders:', error);
+    }
+  };
+
+  const fetchUsers = async () => {
+    try {
+      const response = await axios.get('/api/admin/users', {
+        withCredentials: true
+      });
+      if (response.data.success) {
+        setUsers(response.data.data.users || []);
+      }
+    } catch (error) {
+      console.error('Failed to fetch users:', error);
     }
   };
 
@@ -102,21 +161,50 @@ const AdminDashboard = () => {
     try {
       setLoading(true);
       
+      // Transform frontend form data to backend schema
       const productData = {
-        ...productForm,
-        features: productForm.features.filter(f => f.trim()),
-        colors: productForm.colors.filter(c => c.trim()),
-        straps: productForm.straps.filter(s => s.trim()),
+        name: productForm.name,
+        brand: productForm.brand || 'Chronos',
+        model: productForm.model || productForm.name,
+        description: productForm.description,
+        basePrice: productForm.price,
+        discountPrice: productForm.originalPrice > productForm.price ? productForm.originalPrice : undefined,
+        category: productForm.category,
+        specifications: {
+          material: productForm.features[0] || '',
+          waterResistance: productForm.features[1] || '',
+          movement: productForm.features[2] || '',
+          features: productForm.features.filter(f => f.trim()).join(', ')
+        },
+        variants: [{
+          color: productForm.colors[0] || 'Black',
+          strap: {
+            material: productForm.straps[0] || 'Leather',
+            color: productForm.colors[0] || 'Black'
+          },
+          images: [{
+            url: productForm.image || '/placeholder.svg',
+            alt: productForm.name,
+            isPrimary: true
+          }],
+          stock: productForm.totalStock || 10
+        }],
+        totalStock: productForm.totalStock || 10,
+        isFeatured: productForm.isNew,
+        isActive: true,
+        tags: ['watch', 'luxury', productForm.category.toLowerCase()]
       };
 
+      const config = { withCredentials: true };
+
       if (editingProduct) {
-        await axios.put(`/api/products/admin/products/${editingProduct.id}`, productData);
+        await axios.put(`/api/products/admin/products/${editingProduct.id}`, productData, config);
         toast({
           title: "Product Updated",
           description: "Product has been updated successfully",
         });
       } else {
-        await axios.post('/api/products/admin/products', productData);
+        await axios.post('/api/products/admin/products', productData, config);
         toast({
           title: "Product Created",
           description: "New product has been created successfully",
@@ -141,7 +229,9 @@ const AdminDashboard = () => {
     if (!confirm('Are you sure you want to delete this product?')) return;
     
     try {
-      await axios.delete(`/api/products/admin/products/${productId}`);
+      await axios.delete(`/api/products/admin/products/${productId}`, {
+        withCredentials: true
+      });
       toast({
         title: "Product Deleted",
         description: "Product has been deleted successfully",
@@ -150,7 +240,7 @@ const AdminDashboard = () => {
     } catch (error: any) {
       toast({
         title: "Error",
-        description: "Failed to delete product",
+        description: error.response?.data?.message || "Failed to delete product",
         variant: "destructive",
       });
     }
@@ -160,6 +250,8 @@ const AdminDashboard = () => {
     setEditingProduct(product);
     setProductForm({
       name: product.name,
+      brand: product.brand || '',
+      model: product.model || '',
       price: product.price,
       originalPrice: product.originalPrice || 0,
       image: product.image,
@@ -170,6 +262,7 @@ const AdminDashboard = () => {
       features: product.features,
       colors: product.colors,
       straps: product.straps,
+      totalStock: product.totalStock || 10,
       isNew: product.isNew || false,
       isLimited: product.isLimited || false,
     });
@@ -180,6 +273,8 @@ const AdminDashboard = () => {
     setEditingProduct(null);
     setProductForm({
       name: '',
+      brand: '',
+      model: '',
       price: 0,
       originalPrice: 0,
       image: '',
@@ -190,6 +285,7 @@ const AdminDashboard = () => {
       features: [''],
       colors: [''],
       straps: [''],
+      totalStock: 10,
       isNew: false,
       isLimited: false,
     });
@@ -222,6 +318,78 @@ const AdminDashboard = () => {
       currency: 'INR',
       maximumFractionDigits: 0,
     }).format(price);
+  };
+
+  const handleClearSampleData = async () => {
+    const confirmed = window.confirm(
+      '⚠️ WARNING: This will permanently delete ALL products, categories, and orders from your database.\n\n' +
+      'This action cannot be undone. Are you absolutely sure you want to continue?'
+    );
+    
+    if (!confirmed) return;
+    
+    const doubleConfirm = window.prompt(
+      'To confirm, please type "CLEAR ALL DATA" (exactly as shown):'
+    );
+    
+    if (doubleConfirm !== 'CLEAR ALL DATA') {
+      toast({
+        title: "Operation Cancelled",
+        description: "Data clear operation was cancelled for safety",
+      });
+      return;
+    }
+    
+    try {
+      setLoading(true);
+      await axios.delete('/api/admin/clear-data', {
+        data: { confirmClear: true },
+        withCredentials: true
+      });
+      
+      toast({
+        title: "Sample Data Cleared",
+        description: "All sample data has been removed. Database is ready for production.",
+      });
+      
+      // Refresh the data
+      fetchProducts();
+      fetchStats();
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.response?.data?.message || "Failed to clear sample data",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleInitProduction = async () => {
+    try {
+      setLoading(true);
+      await axios.post('/api/admin/init-production', {}, {
+        withCredentials: true
+      });
+      
+      toast({
+        title: "Production Initialized",
+        description: "Default categories and production settings have been configured.",
+      });
+      
+      // Refresh the data
+      fetchProducts();
+      fetchStats();
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.response?.data?.message || "Failed to initialize production data",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (!user || user.role !== 'admin') {
@@ -261,11 +429,12 @@ const AdminDashboard = () => {
 
       <div className="container mx-auto px-4 py-8">
         <Tabs defaultValue="overview" className="w-full">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="products">Products</TabsTrigger>
             <TabsTrigger value="orders">Orders</TabsTrigger>
             <TabsTrigger value="users">Users</TabsTrigger>
+            <TabsTrigger value="data">Data Management</TabsTrigger>
           </TabsList>
 
           <TabsContent value="overview" className="space-y-6">
@@ -406,6 +575,35 @@ const AdminDashboard = () => {
                           max="5"
                           value={productForm.rating}
                           onChange={(e) => setProductForm(prev => ({ ...prev, rating: Number(e.target.value) }))}
+                        />
+                      </div>
+                      
+                      <div>
+                        <Label>Brand</Label>
+                        <Input
+                          value={productForm.brand}
+                          onChange={(e) => setProductForm(prev => ({ ...prev, brand: e.target.value }))}
+                          placeholder="e.g. Chronos"
+                        />
+                      </div>
+                      
+                      <div>
+                        <Label>Model</Label>
+                        <Input
+                          value={productForm.model}
+                          onChange={(e) => setProductForm(prev => ({ ...prev, model: e.target.value }))}
+                          placeholder="e.g. Royal Heritage"
+                        />
+                      </div>
+                      
+                      <div>
+                        <Label>Stock Quantity</Label>
+                        <Input
+                          type="number"
+                          min="0"
+                          value={productForm.totalStock}
+                          onChange={(e) => setProductForm(prev => ({ ...prev, totalStock: Number(e.target.value) }))}
+                          required
                         />
                       </div>
                     </div>
@@ -583,17 +781,180 @@ const AdminDashboard = () => {
           </TabsContent>
 
           <TabsContent value="orders">
-            <Card className="p-6">
-              <h3 className="text-lg font-semibold mb-4">Orders Management</h3>
-              <p className="text-muted-foreground">Orders management functionality will be integrated with backend API</p>
+            <Card>
+              <div className="p-6 border-b">
+                <h3 className="text-lg font-semibold">Orders Management</h3>
+                <p className="text-muted-foreground">View and manage customer orders</p>
+              </div>
+              
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Order ID</TableHead>
+                    <TableHead>Customer</TableHead>
+                    <TableHead>Date</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Total</TableHead>
+                    <TableHead>Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {orders.length > 0 ? (
+                    orders.map((order) => (
+                      <TableRow key={order._id}>
+                        <TableCell className="font-medium">#{order.orderNumber || order._id.slice(-6)}</TableCell>
+                        <TableCell>
+                          {order.user?.firstName} {order.user?.lastName}
+                          <br />
+                          <span className="text-sm text-muted-foreground">{order.user?.email}</span>
+                        </TableCell>
+                        <TableCell>{new Date(order.createdAt).toLocaleDateString()}</TableCell>
+                        <TableCell>
+                          <Badge variant={
+                            order.status === 'delivered' ? 'default' :
+                            order.status === 'shipped' ? 'secondary' :
+                            order.status === 'processing' ? 'outline' : 'destructive'
+                          }>
+                            {order.status}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>{formatPrice(order.totalAmount)}</TableCell>
+                        <TableCell>
+                          <div className="flex gap-2">
+                            <Button size="sm" variant="outline">
+                              <Eye size={16} />
+                            </Button>
+                            <Button size="sm" variant="outline">
+                              <CheckCircle size={16} />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={6} className="text-center py-8">
+                        <p className="text-muted-foreground">No orders found</p>
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
             </Card>
           </TabsContent>
 
           <TabsContent value="users">
-            <Card className="p-6">
-              <h3 className="text-lg font-semibold mb-4">Users Management</h3>
-              <p className="text-muted-foreground">Users management functionality will be integrated with backend API</p>
+            <Card>
+              <div className="p-6 border-b">
+                <h3 className="text-lg font-semibold">Users Management</h3>
+                <p className="text-muted-foreground">View and manage customer accounts</p>
+              </div>
+              
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Name</TableHead>
+                    <TableHead>Email</TableHead>
+                    <TableHead>Joined</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Orders</TableHead>
+                    <TableHead>Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {users.length > 0 ? (
+                    users.map((user) => (
+                      <TableRow key={user._id}>
+                        <TableCell className="font-medium">
+                          {user.firstName} {user.lastName}
+                        </TableCell>
+                        <TableCell>{user.email}</TableCell>
+                        <TableCell>{new Date(user.createdAt).toLocaleDateString()}</TableCell>
+                        <TableCell>
+                          <Badge variant={user.isActive ? 'default' : 'destructive'}>
+                            {user.isActive ? 'Active' : 'Inactive'}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>{user.orderCount || 0}</TableCell>
+                        <TableCell>
+                          <div className="flex gap-2">
+                            <Button size="sm" variant="outline">
+                              <Eye size={16} />
+                            </Button>
+                            <Button 
+                              size="sm" 
+                              variant={user.isActive ? "destructive" : "default"}
+                            >
+                              {user.isActive ? 'Deactivate' : 'Activate'}
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={6} className="text-center py-8">
+                        <p className="text-muted-foreground">No users found</p>
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
             </Card>
+          </TabsContent>
+
+          <TabsContent value="data" className="space-y-6">
+            <div className="grid gap-6">
+              <Card className="p-6">
+                <h3 className="text-lg font-semibold mb-4 text-destructive">⚠️ Production Data Management</h3>
+                <p className="text-muted-foreground mb-6">
+                  These tools are designed to prepare your store for production. Use with caution as these operations cannot be undone.
+                </p>
+                
+                <div className="space-y-4">
+                  <div className="border border-orange-200 rounded-lg p-4 bg-orange-50">
+                    <h4 className="font-semibold text-orange-800 mb-2">Clear Sample Data</h4>
+                    <p className="text-sm text-orange-700 mb-3">
+                      Remove all demo products, categories, and sample orders. This will prepare your database for real products.
+                    </p>
+                    <Button 
+                      variant="destructive" 
+                      onClick={handleClearSampleData}
+                      disabled={loading}
+                    >
+                      Clear All Sample Data
+                    </Button>
+                  </div>
+                  
+                  <div className="border border-green-200 rounded-lg p-4 bg-green-50">
+                    <h4 className="font-semibold text-green-800 mb-2">Initialize Production Environment</h4>
+                    <p className="text-sm text-green-700 mb-3">
+                      Set up default categories and basic configuration for a production store.
+                    </p>
+                    <Button 
+                      variant="default" 
+                      onClick={handleInitProduction}
+                      disabled={loading}
+                    >
+                      Initialize Production Data
+                    </Button>
+                  </div>
+                  
+                  <div className="border border-blue-200 rounded-lg p-4 bg-blue-50">
+                    <h4 className="font-semibold text-blue-800 mb-2">Production Checklist</h4>
+                    <div className="text-sm text-blue-700 space-y-1">
+                      <p>✅ Admin dashboard fully functional</p>
+                      <p>✅ Product CRUD operations working</p>
+                      <p>✅ Authentication system secure</p>
+                      <p>✅ Payment gateway integrated</p>
+                      <p>⚠️ Clear sample data before going live</p>
+                      <p>⚠️ Test all features thoroughly</p>
+                      <p>⚠️ Configure production environment variables</p>
+                    </div>
+                  </div>
+                </div>
+              </Card>
+            </div>
           </TabsContent>
         </Tabs>
       </div>

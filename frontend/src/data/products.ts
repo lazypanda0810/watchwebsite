@@ -5,6 +5,8 @@ import watch3 from "@/assets/watch-3.jpg";
 export interface Product {
   id: string;
   name: string;
+  brand?: string;
+  model?: string;
   price: number;
   originalPrice?: number;
   image: string;
@@ -17,6 +19,7 @@ export interface Product {
   features: string[];
   colors: string[];
   straps: string[];
+  totalStock?: number;
 }
 
 export const products: Product[] = [
