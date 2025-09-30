@@ -19,7 +19,7 @@ import PaymentCheckout from "./pages/PaymentCheckout";
 import PaymentSuccess from "./pages/PaymentSuccess";
 import PaymentFailure from "./pages/PaymentFailure";
 import OrderHistoryPage from "./pages/OrderHistoryPage";
-import AdminDashboard from "./pages/AdminDashboard";
+import AdminDashboard from "./pages/DirectAdminDashboard";
 import AdminLogin from "./pages/AdminLogin";
 import NotFound from "./pages/NotFound";
 
@@ -75,6 +75,11 @@ const App = () => (
                 </ProtectedRoute>
               } />
               <Route path="/admin/login" element={<AdminLogin />} />
+              <Route path="/admin" element={
+                <ProtectedRoute requireAdmin={true}>
+                  <AdminDashboard />
+                </ProtectedRoute>
+              } />
               <Route path="/admin/dashboard" element={
                 <ProtectedRoute requireAdmin={true}>
                   <AdminDashboard />

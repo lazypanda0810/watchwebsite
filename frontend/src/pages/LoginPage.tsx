@@ -360,28 +360,42 @@ const LoginPage = () => {
             </Button>
           </div>
 
-          <div className="mt-6 text-center text-sm text-muted-foreground">
-            {activeTab === 'login' ? (
-              <p>
-                Don't have an account?{' '}
-                <button
-                  onClick={() => setActiveTab('signup')}
-                  className="text-primary hover:underline"
-                >
-                  Sign up
-                </button>
-              </p>
-            ) : (
-              <p>
-                Already have an account?{' '}
-                <button
-                  onClick={() => setActiveTab('login')}
-                  className="text-primary hover:underline"
-                >
-                  Sign in
-                </button>
-              </p>
-            )}
+          <div className="mt-6 space-y-4">
+            {/* Admin Login Button */}
+            <div className="text-center">
+              <Button
+                variant="outline"
+                onClick={() => navigate('/admin/login')}
+                className="w-full border-blue-600 text-blue-600 hover:bg-blue-50"
+              >
+                <User className="w-4 h-4 mr-2" />
+                Admin Login
+              </Button>
+            </div>
+            
+            <div className="text-center text-sm text-muted-foreground">
+              {activeTab === 'login' ? (
+                <p>
+                  Don't have an account?{' '}
+                  <button
+                    onClick={() => setActiveTab('signup')}
+                    className="text-primary hover:underline"
+                  >
+                    Sign up
+                  </button>
+                </p>
+              ) : (
+                <p>
+                  Already have an account?{' '}
+                  <button
+                    onClick={() => setActiveTab('login')}
+                    className="text-primary hover:underline"
+                  >
+                    Sign in
+                  </button>
+                </p>
+              )}
+            </div>
           </div>
         </Card>
       </div>

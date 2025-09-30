@@ -2,10 +2,16 @@ import React, { createContext, useContext, useEffect, useState, ReactNode } from
 
 interface User {
   id: string;
-  displayName: string;
+  firstName: string;
+  lastName: string;
   email: string;
-  photo: string;
-  provider: string;
+  phone: string;
+  role: 'customer' | 'admin';
+  isVerified: boolean;
+  avatar?: string;
+  displayName?: string;
+  photo?: string;
+  provider?: string;
 }
 
 interface AuthContextType {

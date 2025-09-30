@@ -15,13 +15,17 @@ const generalLimiter = rateLimit({
 
 // Strict rate limiting for auth routes
 const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: process.env.NODE_ENV === 'development' ? 50 : 5, // 50 for dev, 5 for production
+  windowMs: process.env.NODE_ENV === 'development' ? 5 * 60 * 1000 : 15 * 60 * 1000, // 5 minutes for dev, 15 for production
+  max: process.env.NODE_ENV === 'development' ? 100 : 5, // 100 for dev, 5 for production
   message: {
     success: false,
-    message: 'Too many authentication attempts from this IP, please try again after 15 minutes.'
+    message: `Too many authentication attempts from this IP, please try again after ${process.env.NODE_ENV === 'development' ? '5' : '15'} minutes.`
   },
   skipSuccessfulRequests: true,
+  // In development, use memory store which resets on server restart
+  // In production, you might want to use Redis for persistence
+  standardHeaders: true,
+  legacyHeaders: false,
 });
 
 // API rate limiting

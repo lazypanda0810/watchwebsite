@@ -35,26 +35,40 @@ const AdminLogin = () => {
     setError('');
 
     try {
-      await actions.login(formData.email, formData.password);
-      
-      // Check if the logged-in user is an admin
-      const token = localStorage.getItem('auth_token');
-      if (token) {
-        // Parse the token to check role (basic check)
-        const payload = JSON.parse(atob(token.split('.')[1]));
-        if (payload.role === 'admin') {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        // Store the token
+        localStorage.setItem('authToken', data.data.token);
+        
+        // Check if user is admin
+        if (data.data.user.role === 'admin') {
+          // Use the app context to set the user
+          await actions.login(formData.email, formData.password);
+          
           toast({
             title: "Admin Login Successful",
             description: "Welcome to the admin dashboard",
           });
-          navigate('/admin/dashboard');
+          // Redirect to admin dashboard
+          navigate('/admin');
         } else {
           setError('Access denied. Admin privileges required.');
-          localStorage.removeItem('auth_token');
+          localStorage.removeItem('authToken');
         }
+      } else {
+        setError(data.message || 'Login failed. Please check your credentials.');
       }
     } catch (error: any) {
-      setError(error.message || 'Login failed. Please check your credentials.');
+      setError('An error occurred. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -133,10 +147,19 @@ const AdminLogin = () => {
               </Button>
             </form>
             
-            <div className="mt-6 text-center">
+            <div className="mt-6 space-y-3 text-center">
               <p className="text-slate-400 text-sm">
                 Forgot your credentials? Contact system administrator
               </p>
+              <div>
+                <Button 
+                  variant="ghost" 
+                  onClick={() => navigate('/login')}
+                  className="text-slate-300 hover:text-white hover:bg-white/10"
+                >
+                  ← Back to Customer Login
+                </Button>
+              </div>
             </div>
           </CardContent>
         </Card>

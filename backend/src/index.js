@@ -36,6 +36,7 @@ const productRoutes = require('./routes/productRoutes');
 const cartRoutes = require('./routes/cartRoutes');
 const orderRoutes = require('./routes/orderRoutes');
 const adminRoutes = require('./routes/adminRoutes');
+const devRoutes = require('./routes/devRoutes');
 
 // Import middleware
 const { errorHandler, notFound } = require('./middleware/errorHandler');
@@ -163,6 +164,11 @@ app.use('/api/products', productRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api', orderRoutes); // checkout and orders
 app.use('/api/admin', adminRoutes); // Admin management routes
+
+// Development routes (only available in development mode)
+if (process.env.NODE_ENV === 'development') {
+  app.use('/api/dev', devRoutes);
+}
 
 // Admin routes (for categories via products router)
 // Additional admin-specific routes can be added here
