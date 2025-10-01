@@ -114,14 +114,14 @@ const Account = () => {
                                         <h4 className="text-sm font-medium">What happens when I update my email address (or mobile number)?</h4>
                                         <p className="text-sm">Your login email id (or mobile number) changes, likewise. You'll receive all your account related communication on your updated email address (or mobile number).</p>
 
-                                        <h4 className="text-sm font-medium">When will my Flipkart account be updated with the new email address (or mobile number)?</h4>
+                                        <h4 className="text-sm font-medium">When will my WatchHub account be updated with the new email address (or mobile number)?</h4>
                                         <p className="text-sm">It happens as soon as you confirm the verification code sent to your email (or mobile) and save the changes.</p>
 
-                                        <h4 className="text-sm font-medium">What happens to my existing Flipkart account when I update my email address (or mobile number)?</h4>
+                                        <h4 className="text-sm font-medium">What happens to my existing WatchHub account when I update my email address (or mobile number)?</h4>
                                         <p className="text-sm">Updating your email address (or mobile number) doesn't invalidate your account. Your account remains fully functional. You'll continue seeing your Order history, saved information and personal details.</p>
 
                                         <h4 className="text-sm font-medium">Does my Seller account get affected when I update my email address?</h4>
-                                        <p className="text-sm">Flipkart has a 'single sign-on' policy. Any changes will reflect in your Seller account also.</p>
+                                        <p className="text-sm">WatchHub has a 'single sign-on' policy. Any changes will reflect in your Seller account also.</p>
 
                                     </div>
                                     {/* <!-- faqs --> */}

@@ -1,7 +1,7 @@
 {
-  "name": "flipkart",
+  "name": "watchhub-mern",
   "version": "1.0.0",
-  "description": "Full Stack Flipkart Ecommerce",
+  "description": "Full Stack WatchHub - Premium Watch Store",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
@@ -29,5 +29,8 @@
     "stripe": "^8.200.0",
     "uuid": "^8.3.2",
     "validator": "^13.7.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
   }
 }

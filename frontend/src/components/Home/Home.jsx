@@ -25,16 +25,16 @@ const Home = () => {
 
   return (
     <>
-      <MetaData title="Online Shopping Site for Mobiles, Electronics, Furniture, Grocery, Lifestyle, Books & More. Best Offers!" />
+      <MetaData title="WatchHub - Buy Premium Watches Online | Men's, Women's, Smart & Luxury Watches" />
       <Categories />
       <main className="flex flex-col gap-3 px-2 mt-16 sm:mt-2">
         <Banner />
-        <DealSlider title={"Discounts for You"} />
-        {!loading && <ProductSlider title={"Suggested for You"} tagline={"Based on Your Activity"} />}
-        <DealSlider title={"Top Brands, Best Price"} />
+        <DealSlider title={"Watch Deals for You"} />
+        {!loading && <ProductSlider title={"Recommended Watches"} tagline={"Based on Your Activity"} />}
+        <DealSlider title={"Top Watch Brands, Best Price"} />
         {!loading && <ProductSlider title={"You May Also Like..."} tagline={"Based on Your Interest"} />}
-        <DealSlider title={"Top Offers On"} />
-        {!loading && <ProductSlider title={"Don't Miss These!"} tagline={"Inspired by your order"} />}
+        <DealSlider title={"Premium Watch Collection"} />
+        {!loading && <ProductSlider title={"Don't Miss These Timepieces!"} tagline={"Inspired by your browsing"} />}
       </main>
     </>
   );

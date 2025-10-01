@@ -1,50 +1,41 @@
-import mobiles from '../../assets/images/Categories/phone.png';
-import fashion from '../../assets/images/Categories/fashion.png';
-import electronics from '../../assets/images/Categories/electronics.png';
-import home from '../../assets/images/Categories/home.png';
-import travel from '../../assets/images/Categories/travel.png';
-import appliances from '../../assets/images/Categories/appliances.png';
-import furniture from '../../assets/images/Categories/furniture.png';
-import beauty from '../../assets/images/Categories/beauty.png';
-import grocery from '../../assets/images/Categories/grocery.png';
+import WatchIcon from '@mui/icons-material/Watch';
+import WatchLaterIcon from '@mui/icons-material/WatchLater';
+import SportsBikeIcon from '@mui/icons-material/SportsMotorsports';
+import LuxuryIcon from '@mui/icons-material/Star';
+import ChildCareIcon from '@mui/icons-material/ChildCare';
+import FemaleIcon from '@mui/icons-material/Female';
 import { Link } from 'react-router-dom';
 
 const catNav = [
     {
-        name: "Mobiles",
-        icon: mobiles,
+        name: "Men's Watches",
+        icon: WatchIcon,
+        color: "text-blue-600"
     },
     {
-        name: "Fashion",
-        icon: fashion,
+        name: "Women's Watches", 
+        icon: FemaleIcon,
+        color: "text-pink-600"
     },
     {
-        name: "Electronics",
-        icon: electronics,
+        name: "Smartwatches",
+        icon: WatchLaterIcon,
+        color: "text-green-600"
     },
     {
-        name: "Home",
-        icon: home,
+        name: "Luxury Watches",
+        icon: LuxuryIcon,
+        color: "text-yellow-600"
     },
     {
-        name: "Travel",
-        icon: travel,
+        name: "Sports Watches",
+        icon: SportsBikeIcon,
+        color: "text-red-600"
     },
     {
-        name: "Appliances",
-        icon: appliances,
-    },
-    {
-        name: "Furniture",
-        icon: furniture,
-    },
-    {
-        name: "Beauty,Toys & more",
-        icon: beauty,
-    },
-    {
-        name: "Grocery",
-        icon: grocery,
+        name: "Kids' Watches",
+        icon: ChildCareIcon,
+        color: "text-purple-600"
     },
 ]
 
@@ -56,10 +47,10 @@ const Categories = () => {
 
                 {catNav.map((item, i) => (
                     <Link to={`/products?category=${item.name}`} className="flex flex-col gap-1 items-center p-2 group" key={i}>
-                        <div className="h-16 w-16">
-                            <img draggable="false" className="h-full w-full object-contain" src={item.icon} alt={item.name} />
+                        <div className="h-16 w-16 flex items-center justify-center">
+                            <item.icon className={`h-12 w-12 ${item.color} group-hover:scale-110 transition-transform`} />
                         </div>
-                        <span className="text-sm text-gray-800 font-medium group-hover:text-primary-blue">{item.name}</span>
+                        <span className="text-sm text-gray-800 font-medium group-hover:text-gray-900 text-center">{item.name}</span>
                     </Link>
                 ))}
 

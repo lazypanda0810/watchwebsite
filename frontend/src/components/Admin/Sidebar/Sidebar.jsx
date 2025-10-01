@@ -27,12 +27,12 @@ const navMenu = [
     },
     {
         icon: <InventoryIcon />,
-        label: "Products",
+        label: "Watches",
         ref: "/admin/products",
     },
     {
         icon: <AddBoxIcon />,
-        label: "Add Product",
+        label: "Add Watch",
         ref: "/admin/new_product",
     },
     {

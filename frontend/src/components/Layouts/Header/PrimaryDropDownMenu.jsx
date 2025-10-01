@@ -37,7 +37,7 @@ const PrimaryDropDownMenu = ({ setTogglePrimaryDropDown, user }) => {
             redirect: "/",
         },
         {
-            title: "Flipkart Plus Zone",
+            title: "WatchHub Plus Zone",
             icon: <AddCircleIcon sx={{ fontSize: "18px" }} />,
             redirect: "/",
         },

@@ -4,12 +4,6 @@ import "slick-carousel/slick/slick-theme.css";
 import './Banner.css';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-import gadgetSale from '../../../assets/images/Banners/gadget-sale.jpg';
-import kitchenSale from '../../../assets/images/Banners/kitchen-sale.jpg';
-import poco from '../../../assets/images/Banners/poco-m4-pro.webp';
-import realme from '../../../assets/images/Banners/realme-9-pro.webp';
-import fashionSale from '../../../assets/images/Banners/fashionsale.jpg';
-import oppo from '../../../assets/images/Banners/oppo-reno7.webp';
 
 export const PreviousBtn = ({ className, onClick }) => {
   return (
@@ -31,7 +25,7 @@ const Banner = () => {
 
   const settings = {
     autoplay: true,
-    autoplaySpeed: 2000,
+    autoplaySpeed: 3000,
     dots: false,
     infinite: true,
     speed: 500,
@@ -41,7 +35,15 @@ const Banner = () => {
     nextArrow: <NextBtn />,
   };
 
-  const banners = [gadgetSale, kitchenSale, poco, fashionSale, realme, oppo];
+  // Watch-themed banner images from Unsplash
+  const banners = [
+    'https://images.unsplash.com/photo-1594534475808-b18fc33b045e?w=1200&h=400&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1522312346375-d1a52e2b99b3?w=1200&h=400&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1434056886845-dac89ffe9b56?w=1200&h=400&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1547996160-81dfa63595aa?w=1200&h=400&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1539874754764-5a96559165b0?w=1200&h=400&fit=crop&q=80',
+    'https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?w=1200&h=400&fit=crop&q=80'
+  ];
 
   return (
     <>

@@ -11,7 +11,7 @@ const { v4: uuidv4 } = require('uuid');
 //         amount: req.body.amount,
 //         currency: "inr",
 //         metadata: {
-//             company: "Flipkart",
+//             company: "WatchHub",
 //         },
 //     });
 

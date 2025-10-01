@@ -202,7 +202,7 @@ const ProductDetails = () => {
                                     {Array(3).fill("").map((el, i) => (
                                         <p className="text-sm flex items-center gap-1" key={i}>
                                             <span className="text-primary-lightGreen"><LocalOfferIcon sx={{ fontSize: "20px" }} /></span>
-                                            <span className="font-medium ml-2">Bank Offer</span> 15% Instant discount on first Flipkart Pay Later order of 500 and above <Link className="text-primary-blue font-medium" to="/">T&C</Link>
+                                            <span className="font-medium ml-2">Bank Offer</span> 15% Instant discount on first WatchHub Pay Later order of 500 and above <Link className="text-primary-blue font-medium" to="/">T&C</Link>
                                         </p>
                                     ))}
                                     {/* <!-- banks offers --> */}
@@ -263,13 +263,12 @@ const ProductDetails = () => {
                                     </div>
                                     {/* <!-- seller details --> */}
 
-                                    {/* <!-- flipkart plus banner --> */}
-                                    <div className="sm:w-1/2 mt-4 border">
-                                        <img draggable="false" className="w-full h-full object-contain" src="https://rukminim1.flixcart.com/lockin/763/305/images/promotion_banner_v2_active.png" alt="" />
+                                    {/* <!-- watchhub plus banner --> */}
+                                    <div className="sm:w-1/3 flex gap-1 items-center">
+                                        <img draggable="false" className="w-20 h-8 object-contain" src="https://static-assets-web.flixcart.com/www/linchpin/fk-cp-zion/img/plus_aef861.png" alt="Plus" />
+                                        <span className="text-sm">Plus (F-Assured) - Fast and safe delivery | 7 days easy returns</span>
                                     </div>
-                                    {/* <!-- flipkart plus banner --> */}
-
-                                    {/* <!-- description details --> */}
+                                    {/* <!-- watchhub plus banner --> */}                                    {/* <!-- description details --> */}
                                     <div className="flex flex-col sm:flex-row gap-1 sm:gap-14 mt-4 items-stretch text-sm">
                                         <p className="text-gray-500 font-medium">Description</p>
                                         <span>{product.description}</span>

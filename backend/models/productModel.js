@@ -3,12 +3,12 @@ const mongoose = require('mongoose');
 const productSchema = new mongoose.Schema({
     name: {
         type: String,
-        required: [true, "Please enter product name"],
+        required: [true, "Please enter watch name"],
         trim: true
     },
     description: {
         type: String,
-        required: [true, "Please enter product description"]
+        required: [true, "Please enter watch description"]
     },
     highlights: [
         {
@@ -28,9 +28,32 @@ const productSchema = new mongoose.Schema({
             }
         }
     ],
+    // Watch-specific fields
+    movementType: {
+        type: String,
+        enum: ['Quartz', 'Automatic', 'Manual', 'Digital', 'Smart'],
+        default: 'Quartz'
+    },
+    dialColor: {
+        type: String,
+        default: 'Black'
+    },
+    strapMaterial: {
+        type: String,
+        enum: ['Leather', 'Metal', 'Rubber', 'Silicone', 'Fabric', 'Ceramic'],
+        default: 'Leather'
+    },
+    waterResistance: {
+        type: String,
+        default: '50m'
+    },
+    caseSize: {
+        type: String,
+        default: '42mm'
+    },
     price: {
         type: Number,
-        required: [true, "Please enter product price"]
+        required: [true, "Please enter watch price"]
     },
     cuttedPrice: {
         type: Number,
@@ -66,11 +89,12 @@ const productSchema = new mongoose.Schema({
     },
     category: {
         type: String,
-        required: [true, "Please enter product category"]
+        required: [true, "Please enter watch category"],
+        enum: ["Men's Watches", "Women's Watches", "Smartwatches", "Luxury Watches", "Sports Watches", "Kids' Watches"]
     },
     stock: {
         type: Number,
-        required: [true, "Please enter product stock"],
+        required: [true, "Please enter watch stock"],
         maxlength: [4, "Stock cannot exceed limit"],
         default: 1
     },

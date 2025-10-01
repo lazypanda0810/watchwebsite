@@ -1,5 +1,5 @@
 {
-  "name": "frontend",
+  "name": "watchhub-frontend",
   "version": "0.1.0",
   "private": true,
   "proxy": "http://localhost:4000",
@@ -14,7 +14,7 @@
     "@testing-library/user-event": "^13.5.0",
     "axios": "^0.25.0",
     "chart.js": "^3.7.0",
-    "flipkart": "file:..",
+    "watchhub": "file:..",
     "notistack": "^2.0.3",
     "react": "^17.0.2",
     "react-chartjs-2": "^4.0.1",

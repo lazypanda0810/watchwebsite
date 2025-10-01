@@ -10,7 +10,7 @@ const Wishlist = () => {
 
     return (
         <>
-            <MetaData title="Wishlist | Flipkart" />
+            <MetaData title="Wishlist | WatchHub" />
 
             <MinCategory />
             <main className="w-full mt-12 sm:mt-0">
