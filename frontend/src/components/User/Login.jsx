@@ -38,7 +38,7 @@ const Login = () => {
 
     return (
         <>
-            <MetaData title="Login | Flipkart" />
+            <MetaData title="Login | WatchHub" />
 
             {loading && <BackdropLoader />}
             <main className="w-full mt-12 sm:pt-20 sm:mt-0">
@@ -84,7 +84,7 @@ const Login = () => {
 
                                     {/* <!-- button container --> */}
                                     <div className="flex flex-col gap-2.5 mt-2 mb-32">
-                                        <p className="text-xs text-primary-grey text-left">By continuing, you agree to Flipkart's <a href="https://www.flipkart.com/pages/terms" className="text-primary-blue"> Terms of Use</a> and <a href="https://www.flipkart.com/pages/privacypolicy" className="text-primary-blue"> Privacy Policy.</a></p>
+                                        <p className="text-xs text-primary-grey text-left">By continuing, you agree to WatchHub's <a href="https://www.watchhub.com/pages/terms" className="text-primary-blue"> Terms of Use</a> and <a href="https://www.watchhub.com/pages/privacypolicy" className="text-primary-blue"> Privacy Policy.</a></p>
                                         <button type="submit" className="text-white py-3 w-full bg-primary-orange shadow hover:shadow-lg rounded-sm font-medium">Login</button>
                                         <Link to="/password/forgot" className="hover:bg-gray-50 text-primary-blue text-center py-3 w-full shadow border rounded-sm font-medium">Forgot Password?</Link>
                                     </div>
@@ -94,7 +94,7 @@ const Login = () => {
                             </form>
                             {/* <!-- input container --> */}
 
-                            <Link to="/register" className="font-medium text-sm text-primary-blue">New to Flipkart? Create an account</Link>
+                            <Link to="/register" className="font-medium text-sm text-primary-blue">New to WatchHub? Create an account</Link>
                         </div>
                         {/* <!-- edit info container --> */}
 

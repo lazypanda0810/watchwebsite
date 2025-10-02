@@ -26,15 +26,17 @@ module.exports = {
       indigo: colors.indigo,
       purple: colors.violet,
       pink: colors.pink,
-      // custom colors
+      // custom colors for watch store
       primary: {
-        blue: '#2874f0',
+        blue: '#1e40af', // Darker, more professional blue
         lightGreen: '#14be47',
         green: '#388e3c',
-        yellow: '#ff9f00',
-        orange: '#fb641b',
-        darkBlue: '#172337',
-        grey: '#878787',
+        yellow: '#d97706', // More refined amber/gold
+        orange: '#ea580c', // Sophisticated orange
+        darkBlue: '#0f172a', // Deeper navy for elegance
+        grey: '#6b7280', // Modern gray
+        gold: '#d4af37', // Classic gold accent
+        amber: '#f59e0b', // Warm amber
       },
     },
     spacing: {

@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document summarizes all the changes made to transform the Flipkart MERN e-commerce project into WatchHub, a specialized premium watch store.
+This document summarizes all the changes made to transform the WatchHub MERN e-commerce project into WatchHub, a specialized premium watch store.
 
 ## Files Modified
 

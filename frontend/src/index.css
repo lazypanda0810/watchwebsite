@@ -17,8 +17,9 @@ body {
 
 /* login signup sidebar bg image */
 .loginSidebar {
-    background-image: url("https://static-assets-web.flixcart.com/www/linchpin/fk-cp-zion/img/login_img_c4a81e.png");
-    background-position: center 85%;
+    background-image: url("https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=600&fit=crop&q=80");
+    background-position: center center;
     background-repeat: no-repeat;
+    background-size: cover;
 }
 /* login signup sidebar bg image */

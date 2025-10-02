@@ -61,7 +61,7 @@ const Products = () => {
 
     return (
         <>
-            <MetaData title="All Products | Flipkart" />
+            <MetaData title="All Products | WatchHub" />
 
             <MinCategory />
             <main className="w-full mt-14 sm:mt-0">
@@ -179,7 +179,7 @@ const Products = () => {
 
                         {!loading && products?.length === 0 && (
                             <div className="flex flex-col items-center justify-center gap-3 bg-white shadow-sm rounded-sm p-6 sm:p-16">
-                                <img draggable="false" className="w-1/2 h-44 object-contain" src="https://static-assets-web.flixcart.com/www/linchpin/fk-cp-zion/img/error-no-search-results_2353c5.png" alt="Search Not Found" />
+                                <img draggable="false" className="w-1/2 h-44 object-contain" src="https://images.unsplash.com/photo-1594736797933-d0401ba0bded?w=300&h=200&fit=crop&q=80" alt="No Watches Found" />
                                 <h1 className="text-2xl font-medium text-gray-900">Sorry, no results found!</h1>
                                 <p className="text-xl text-center text-primary-grey">Please check the spelling or try searching for something else</p>
                             </div>

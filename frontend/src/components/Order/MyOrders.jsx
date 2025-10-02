@@ -106,7 +106,7 @@ const MyOrders = () => {
 
     return (
         <>
-            <MetaData title="My Orders | Flipkart" />
+            <MetaData title="My Orders | WatchHub" />
 
             <MinCategory />
             <main className="w-full mt-16 sm:mt-0">
@@ -198,7 +198,7 @@ const MyOrders = () => {
 
                                 {orders && filteredOrders.length === 0 && (
                                     <div className="flex items-center flex-col gap-2 p-8 bg-white">
-                                        <img draggable="false" src="https://rukminim1.flixcart.com/www/100/100/promos/23/08/2020/c5f14d2a-2431-4a36-b6cb-8b5b5e283d4f.png" alt="Empty Orders" />
+                                        <img draggable="false" src="https://images.unsplash.com/photo-1611930022073-b7a4ba5fcccd?w=100&h=100&fit=crop&q=80" alt="No Orders Yet" />
                                         <span className="text-lg font-medium">Sorry, no results found</span>
                                         <p>Edit search or clear all filters</p>
                                     </div>

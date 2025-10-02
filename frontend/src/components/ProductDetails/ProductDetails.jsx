@@ -265,7 +265,7 @@ const ProductDetails = () => {
 
                                     {/* <!-- watchhub plus banner --> */}
                                     <div className="sm:w-1/3 flex gap-1 items-center">
-                                        <img draggable="false" className="w-20 h-8 object-contain" src="https://static-assets-web.flixcart.com/www/linchpin/fk-cp-zion/img/plus_aef861.png" alt="Plus" />
+                                        <span className="text-primary-blue text-sm font-medium">Premium Member</span>
                                         <span className="text-sm">Plus (F-Assured) - Fast and safe delivery | 7 days easy returns</span>
                                     </div>
                                     {/* <!-- watchhub plus banner --> */}                                    {/* <!-- description details --> */}

@@ -2,16 +2,16 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Link } from 'react-router-dom';
 
 const categories = [
-    "Electronics",
-    "TVs & Appliances",
-    "Men",
-    "Women",
-    "Baby & Kids",
-    "Home & Furniture",
-    "Sports, Books & More",
-    "Flights",
-    "Offer Zone",
-    "Grocery",
+    "Men's Watches",
+    "Women's Watches", 
+    "Smartwatches",
+    "Luxury Watches",
+    "Sports Watches",
+    "Kids' Watches",
+    "Swiss Made",
+    "Vintage Collection",
+    "Watch Accessories",
+    "Special Offers",
 ]
 
 const MinCategory = () => {

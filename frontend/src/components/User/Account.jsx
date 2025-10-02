@@ -132,7 +132,7 @@ const Account = () => {
                                 </div>
                                 {/* <!-- edit info container --> */}
 
-                                <img draggable="false" className="w-full object-contain" src="https://static-assets-web.flixcart.com/www/linchpin/fk-cp-zion/img/myProfileFooter_4e9fe2.png" alt="footer" />
+                                <img draggable="false" className="w-full object-contain" src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=200&fit=crop&q=80" alt="WatchHub Account" />
                             </div>
                             {/* <!-- details column --> */}
                         </div>

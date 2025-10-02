@@ -26,7 +26,7 @@ const Wishlist = () => {
 
                             {wishlistItems.length === 0 && (
                                 <div className="flex items-center flex-col gap-2 m-6">
-                                    <img draggable="false" className="object-contain" src="https://static-assets-web.flixcart.com/www/linchpin/fk-cp-zion/img/mywishlist-empty_39f7a5.png" alt="Empty Wishlist" />
+                                    <img draggable="false" className="object-contain" src="https://images.unsplash.com/photo-1434056886845-dac89ffe9b56?w=200&h=200&fit=crop&q=80" alt="Empty Wishlist" />
                                     <span className="text-lg font-medium mt-6">Empty Wishlist</span>
                                     <p>You have no items in your wishlist. Start adding!</p>
                                 </div>
